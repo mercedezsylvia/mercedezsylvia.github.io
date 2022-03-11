@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html class="no-js" lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Mercedez Sylvia Portfolio</title>
+	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+	<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
+    <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+</head>
+<body>
+	<div>
+        <div class="container">
+            <div class="row">
+                <div>
+                    <h2 class="heading">Interfaces</h2>
+					<p><b>How it works:</b> Validate Manual starts at the top of the manual and works its way through every single chapter, section, appendix collecting all data about data content, tables, graphics, links, dates, change controls. </p>
+					<p><b>Time it saves:</b> The Validate Manual report takes approximately 30 seconds to generate. This can save hours of work. </p>
+                </div>
+				<div>
+				<h3>
+				List Exception Links
+				</h3>
+				<p>This is my sumamry of List exception links.</p>
+				</div>
+				<div id="pre">
+					
+<code>
+	function listExceptionLinks(){
+	#List all exceptions links in manual. 
+
+	#display link error info. 
+	if (count($linkTARGETID) > 0)
+	{
+		#Heading information	
+		eval "\n=======================================" output=>*
+		eval "\nException Links Report" output=>*
+		eval "\n".$manualTitle output=>*
+		eval "\nRevision Number: ".$manualRevnumber output=>*
+		eval "\nRevision Date: ".$manualRevdate output=>*
+		eval "\nReport Run: ".time_date() output=>*
+		eval "\nRun by: ".username() output=>*
+		eval "\n=======================================\n" output=>*
+			
+		if($vExceptionLinkCount>0)
+		{
+			
+			for($eachvLinkOID in $vExceptionLink)
+			{
+				eval "\n\n [EXCEPTION]" output=>*
+				eval "\n\t Location: ".$vExceptionLinkLocation[$eachvLinkOID] output=>*
+				eval "\n\t Target ID: <".$vExceptionLink_Oidname[$eachvLinkOID]."> ".$vExceptionLinkTargetID[$eachvLinkOID] output=>*
+				eval "\n\t Current Text: ".$vExceptionLinkCurrentText[$eachvLinkOID] output=>*				
+			}
+			
+			eval "\n\n\n Exceptions Links: ".$vExceptionLinkCount output=>*		
+		}
+		else
+		{
+			eval "No Exception Links in this manual." output=>*	
+		}
+	}
+	else 
+	{
+		message "Run Index Manual"
+	}
+	
+	}
+</code>
+					
+				
+				</div>
+            </div>
+
+				<div>
+				<h3>
+				Validate Change Markup
+				</h3>
+				<p>This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.</p>
+				</div>
+			<div id="pre">
+			<code>
+			function validateMarkup(){	
+#Checks if two tech:revst or two tech:revend tags are subsequent. 
+#checks for nested change bars. 
+
+		
+    #clear the arrays
+	delete($oid_techStartArr);
+	delete($oid_techEndArr);
+	delete($oid_techrevArr);
+	$vCurrentEndTag = "";
+	$vPreviousStartTag = "";
+	$neweach_entry = 0;
+	
+	eval "\n================================ " output=*
+	eval "\nChange Markup Report " output=>*
+	eval "\nReport Run: ".time_date() output=>*
+	eval "\n" output=>*
+	eval "\n================================\n" output=>*
+	
+	
+	#Find all the instances of tech:revst and tech:revend and put them into separate arrays.
+	oid_find_children(oid_first(), oid_techStartArr, "tech:revst");
+	oid_find_children(oid_first(), oid_techEndArr, "tech:revend");
+	
+	#If tech:revst and tech:revend exist
+	if (count(oid_techStartArr) > 0 && count(oid_techEndArr) > 0)
+	{
+	
+		#Load all techStartArr items into combined array oid_techrevArr
+		for ($eachStart in oid_techStartArr)
+		{
+			#At each [position] of techrevArr, add each tech:revst from oid_techStartArr
+			oid_techrevArr[$eachStart] = oid_techStartArr[$eachStart];
+		}
+	
+		#Count the number of items in new oid_techrevArr (at this point, it is only tech:revsts). Need this to add tech:revends after the last tech:revst.
+		start_count = count(oid_techrevArr);
+		current_rev_count = start_count + 1;
+	
+		#Load all techEndArr items into combined array oid_techrevArr after the last tech:revst.
+		for ($eachEnd in oid_techEndArr)
+		{
+			#After the last tech:revst item, at each [position + 1] of techrevArr, add each tech:revend from oid_techStartArr. (Must use +1 so that the tech:revend does not override the tech:revst items already in the array.)
+			oid_techrevArr[current_rev_count] = oid_techEndArr[$eachEnd];
+			current_rev_count++;
+		}
+		
+		#display every item in the new oid_techrevArr
+		#for ($eachEntry3 in oid_techrevArr)
+		#{
+			#Change the tech:revst type to the current oid
+			#oid_modify_attr(oid_techrevArr[$eachEntry3],"type", oid_techrevArr[$eachEntry3])
+			#eval oid_techrevArr[$eachEntry3] output=>*
+		#}
+		
+		#create a line to separate unsorted and sorted
+		#eval " - - - - - - -complete array above- - - - - - - - - - " output=>*
+	
+		#sort oid_techrevArr by oid. This is not work. 
+		#qsort(oid_techrevArr);
+	
+
+		#insertion sort
+		local i; #i = index number of how many items in oid_techrevArr (e.g., 6 total)
+		local key; #key = index number of the specific item in oid_techrevArr (e.g., third item in the array)
+		local j; #j = index number of one less item. (e.g., the item one less than the key (e.g., the second item in the array)
+		local temp; #this holds the item temporarily to move forward in the array
+		local idNumbersCount = count(oid_techrevArr); #total number of items in oid_techrevArr
+	
+		#for as many items there are in oid_techrevArr. i = index
+		for (i = 0; i < idNumbersCount; i++)
+		{
+			#key = index number of item in oid_techrevArr
+			local key = oid_techrevArr[i];
+			#compare the current item i to the index number of one less (ex: compare index item 2 to index item 1)/ j = index number of one less item. 
+			local j = i - 1;
+		
+			#iterate though the list of items to left of index and swap elements if less. End loop when reach index 1 or when key value reaches item it is no longer smaller than. 
+			while (j >= 1 && key < oid_techrevArr[j])
+			{
+				temp = oid_techrevArr[j];
+				oid_techrevArr[j] = oid_techrevArr[j + 1];
+				oid_techrevArr[j + 1] = temp;
+				j--;
+			}
+		}
+
+		#display sorted oid_techrevArr
+		#for ($eachEntry2 in oid_techrevArr)
+		#{
+		#	eval oid_techrevArr[$eachEntry2] output=>*
+		#}
+		#eval " - - - - - - - - sorted above - - - - - - - - - - - - - - " output=>*
+	
+		#count how many items are in oid_techrevArr
+		$techrev_count=count(oid_techrevArr);
+	
+		#Retrieve the name of the oid  for every item in oid_techrevArr (will be tech:revst or tech:revend).
+		for($each_entry in oid_techrevArr)
+		{
+			#if first item is a tech:revend, break and display message.
+			if (oid_name(oid_techrevArr[1]) == "tech:revend")
+			{
+				eval "This document starts with a tech:revend." output=>*
+				#scroll the page to the problem OID
+				scroll_to_oid(oid_techrevArr[$each_entry])
+				#Move the cursor to the start of the problem OID
+				goto_oid(oid_techrevArr[$each_entry], -2)
+				#begin selection
+				mark begin
+				#Move cursor to the end of the problem OID
+				goto_oid(oid_techrevArr[$each_entry], -3)
+				#end selection
+				mark end
+				break;
+			}
+		
+			#if the total amount of revbars is NOT equal to the amount of loops (2 total rev bars, code loops through each one once)
+			#this means we have not reached the last change bar in the document. 
+			if($each_entry != $techrev_count)
+			{
+				#Retrieve the name of the first oid. 
+				$currentTag = oid_name(oid_techrevArr[$each_entry]);
+				
+				#Retrieve the name of the next oid
+				$nextTagm = oid_name(oid_techrevArr[$each_entry + 1]);
+				
+				if ($currentTag == $nextTagm)
+				{
+					eval "Something is broken at this location." output=>*
+					#eval " - - - - - - - - - - - - - - - - - - - - - - - " output=>*
+					#scroll the page to the problem OID
+					scroll_to_oid(oid_techrevArr[$each_entry + 1])
+					#Move the cursor to the start of the problem OID
+					goto_oid(oid_techrevArr[$each_entry + 1], -2)
+					#begin selection
+					mark begin
+					#Move cursor to the end of the problem OID
+					goto_oid(oid_techrevArr[$each_entry + 1], -3)
+					#end selection
+					mark end
+					#and done.
+					break;
+				}	
+			}
+			
+			#this detects if there is nested change markup. #scrolls to the end tag.
+			#the change bars should have the same parent. otherwise, change bar is nested. 
+			if(oid_name(oid_techrevArr[$each_entry]) == "tech:revend")
+			{
+				$vCurrentEndTag = oid_parent(oid_techrevArr[$each_entry])
+				$vPreviousStartTag = oid_parent(oid_techrevArr[$each_entry-1])
+				
+				if($vCurrentEndTag != $vPreviousStartTag)
+				{
+					eval "This change markup is incorrectly nested." output=>*
+					#scroll the page to the end tag
+					scroll_to_oid(oid_techrevArr[$each_entry])
+					#Move the cursor to the start of the end tag
+					goto_oid(oid_techrevArr[$each_entry], -2)
+					#begin selection
+					mark begin
+					#Move cursor to the end of the end tag
+					goto_oid(oid_techrevArr[$each_entry], -3)
+					#end selection
+					mark end
+					break
+				}
+			}
+			
+			#this saves the count of each entry to new variable (which is the count of of the number of loops)
+			#fyi: each_entry does not exist outside of this loop. 
+			$neweach_entry = $each_entry
+			
+			#display the names of the oids
+			#eval $currentTag." ".$nextTagm output=>*	
+		}
+		
+		#if the total amount of revbars is equal to the amount of loops (2 total rev bars, code loops through each one once)
+		#if code gets to this point and has not broken out, then there are no errors. 
+		if ($techrev_count == $neweach_entry)
+		{
+			eval "This document does not contain markup errors." output=>*
+		}
+	}
+	
+	
+		
+	#if only a single start or end tag in document. 
+	local startEmptyEndOne = count(oid_techStartArr) == 0 && count(oid_techEndArr) == 1; 
+	local startOneEndempty = count(oid_techStartArr) == 1 && count(oid_techEndArr) == 0;
+	
+	if (startEmptyEndOne || startOneEndempty)
+	{
+		#if only one end, scroll to tech:revend
+		if (startEmptyEndOne)
+		{
+			eval "This document only contains a single tech:revend." output=>*
+			#scroll the page to the problem OID
+			scroll_to_oid(oid_techEndArr[1])
+			#Move the cursor to the start of the problem OID
+			goto_oid(oid_techEndArr[1], -2)
+			#begin selection
+			mark begin
+			#Move cursor to the end of the problem OID
+			goto_oid(oid_techEndArr[1], -3)
+			#end selection
+			mark end
+		}
+		
+		#if only one start, scroll to tech:revst	
+		if (startOneEndempty)
+		{
+			eval "This document only contains a single tech:revst." output=>*
+			#scroll the page to the problem OID
+			scroll_to_oid(oid_techStartArr[1])
+			#Move the cursor to the start of the problem OID
+			goto_oid(oid_techStartArr[1], -2)
+			#begin selection
+			mark begin
+			#Move cursor to the end of the problem OID
+			goto_oid(oid_techStartArr[1], -3)
+			#end selection
+			mark end
+		}
+				
+	}
+	
+	if  (count(oid_techStartArr) == 0 && count(oid_techEndArr) == 0) 
+	{ 
+		eval "This document does not contain change markup." output=>*
+	}
+		
+	#eval "\n\n=============END================" output=>* 
+			
+}
+			
+			</code>
+			</div>
+        </div>
+    </div>
+</body>
+</html>
