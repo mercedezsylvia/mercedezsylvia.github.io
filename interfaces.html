@@ -6,325 +6,437 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mercedez Sylvia Portfolio</title>
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark.min.css">
 </head>
 <body>
-	<div>
-        <div class="container">
-            <div class="row">
-                <div>
-                    <h2 class="heading">Interfaces</h2>
-					<p><b>How it works:</b> Validate Manual starts at the top of the manual and works its way through every single chapter, section, appendix collecting all data about data content, tables, graphics, links, dates, change controls. </p>
-					<p><b>Time it saves:</b> The Validate Manual report takes approximately 30 seconds to generate. This can save hours of work. </p>
-                </div>
-				<div>
-				<h3>
-				List Exception Links
-				</h3>
-				<p>This is my sumamry of List exception links.</p>
-				</div>
-				<div id="pre">
-					
-<code>
-	function listExceptionLinks(){
-	#List all exceptions links in manual. 
-
-	#display link error info. 
-	if (count($linkTARGETID) > 0)
-	{
-		#Heading information	
-		eval "\n=======================================" output=>*
-		eval "\nException Links Report" output=>*
-		eval "\n".$manualTitle output=>*
-		eval "\nRevision Number: ".$manualRevnumber output=>*
-		eval "\nRevision Date: ".$manualRevdate output=>*
-		eval "\nReport Run: ".time_date() output=>*
-		eval "\nRun by: ".username() output=>*
-		eval "\n=======================================\n" output=>*
-			
-		if($vExceptionLinkCount>0)
-		{
-			
-			for($eachvLinkOID in $vExceptionLink)
-			{
-				eval "\n\n [EXCEPTION]" output=>*
-				eval "\n\t Location: ".$vExceptionLinkLocation[$eachvLinkOID] output=>*
-				eval "\n\t Target ID: <".$vExceptionLink_Oidname[$eachvLinkOID]."> ".$vExceptionLinkTargetID[$eachvLinkOID] output=>*
-				eval "\n\t Current Text: ".$vExceptionLinkCurrentText[$eachvLinkOID] output=>*				
-			}
-			
-			eval "\n\n\n Exceptions Links: ".$vExceptionLinkCount output=>*		
-		}
-		else
-		{
-			eval "No Exception Links in this manual." output=>*	
-		}
-	}
-	else 
-	{
-		message "Run Index Manual"
-	}
-	
-	}
-</code>
-					
-				
-				</div>
-            </div>
-
-				<div>
-				<h3>
-				Validate Change Markup
-				</h3>
-				<p>This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.</p>
-				</div>
-			<div id="pre">
-			<code>
-			function validateMarkup(){	
-#Checks if two tech:revst or two tech:revend tags are subsequent. 
-#checks for nested change bars. 
-
-		
-    #clear the arrays
-	delete($oid_techStartArr);
-	delete($oid_techEndArr);
-	delete($oid_techrevArr);
-	$vCurrentEndTag = "";
-	$vPreviousStartTag = "";
-	$neweach_entry = 0;
-	
-	eval "\n================================ " output=*
-	eval "\nChange Markup Report " output=>*
-	eval "\nReport Run: ".time_date() output=>*
-	eval "\n" output=>*
-	eval "\n================================\n" output=>*
-	
-	
-	#Find all the instances of tech:revst and tech:revend and put them into separate arrays.
-	oid_find_children(oid_first(), oid_techStartArr, "tech:revst");
-	oid_find_children(oid_first(), oid_techEndArr, "tech:revend");
-	
-	#If tech:revst and tech:revend exist
-	if (count(oid_techStartArr) > 0 && count(oid_techEndArr) > 0)
-	{
-	
-		#Load all techStartArr items into combined array oid_techrevArr
-		for ($eachStart in oid_techStartArr)
-		{
-			#At each [position] of techrevArr, add each tech:revst from oid_techStartArr
-			oid_techrevArr[$eachStart] = oid_techStartArr[$eachStart];
-		}
-	
-		#Count the number of items in new oid_techrevArr (at this point, it is only tech:revsts). Need this to add tech:revends after the last tech:revst.
-		start_count = count(oid_techrevArr);
-		current_rev_count = start_count + 1;
-	
-		#Load all techEndArr items into combined array oid_techrevArr after the last tech:revst.
-		for ($eachEnd in oid_techEndArr)
-		{
-			#After the last tech:revst item, at each [position + 1] of techrevArr, add each tech:revend from oid_techStartArr. (Must use +1 so that the tech:revend does not override the tech:revst items already in the array.)
-			oid_techrevArr[current_rev_count] = oid_techEndArr[$eachEnd];
-			current_rev_count++;
-		}
-		
-		#display every item in the new oid_techrevArr
-		#for ($eachEntry3 in oid_techrevArr)
-		#{
-			#Change the tech:revst type to the current oid
-			#oid_modify_attr(oid_techrevArr[$eachEntry3],"type", oid_techrevArr[$eachEntry3])
-			#eval oid_techrevArr[$eachEntry3] output=>*
-		#}
-		
-		#create a line to separate unsorted and sorted
-		#eval " - - - - - - -complete array above- - - - - - - - - - " output=>*
-	
-		#sort oid_techrevArr by oid. This is not work. 
-		#qsort(oid_techrevArr);
-	
-
-		#insertion sort
-		local i; #i = index number of how many items in oid_techrevArr (e.g., 6 total)
-		local key; #key = index number of the specific item in oid_techrevArr (e.g., third item in the array)
-		local j; #j = index number of one less item. (e.g., the item one less than the key (e.g., the second item in the array)
-		local temp; #this holds the item temporarily to move forward in the array
-		local idNumbersCount = count(oid_techrevArr); #total number of items in oid_techrevArr
-	
-		#for as many items there are in oid_techrevArr. i = index
-		for (i = 0; i < idNumbersCount; i++)
-		{
-			#key = index number of item in oid_techrevArr
-			local key = oid_techrevArr[i];
-			#compare the current item i to the index number of one less (ex: compare index item 2 to index item 1)/ j = index number of one less item. 
-			local j = i - 1;
-		
-			#iterate though the list of items to left of index and swap elements if less. End loop when reach index 1 or when key value reaches item it is no longer smaller than. 
-			while (j >= 1 && key < oid_techrevArr[j])
-			{
-				temp = oid_techrevArr[j];
-				oid_techrevArr[j] = oid_techrevArr[j + 1];
-				oid_techrevArr[j + 1] = temp;
-				j--;
-			}
-		}
-
-		#display sorted oid_techrevArr
-		#for ($eachEntry2 in oid_techrevArr)
-		#{
-		#	eval oid_techrevArr[$eachEntry2] output=>*
-		#}
-		#eval " - - - - - - - - sorted above - - - - - - - - - - - - - - " output=>*
-	
-		#count how many items are in oid_techrevArr
-		$techrev_count=count(oid_techrevArr);
-	
-		#Retrieve the name of the oid  for every item in oid_techrevArr (will be tech:revst or tech:revend).
-		for($each_entry in oid_techrevArr)
-		{
-			#if first item is a tech:revend, break and display message.
-			if (oid_name(oid_techrevArr[1]) == "tech:revend")
-			{
-				eval "This document starts with a tech:revend." output=>*
-				#scroll the page to the problem OID
-				scroll_to_oid(oid_techrevArr[$each_entry])
-				#Move the cursor to the start of the problem OID
-				goto_oid(oid_techrevArr[$each_entry], -2)
-				#begin selection
-				mark begin
-				#Move cursor to the end of the problem OID
-				goto_oid(oid_techrevArr[$each_entry], -3)
-				#end selection
-				mark end
-				break;
-			}
-		
-			#if the total amount of revbars is NOT equal to the amount of loops (2 total rev bars, code loops through each one once)
-			#this means we have not reached the last change bar in the document. 
-			if($each_entry != $techrev_count)
-			{
-				#Retrieve the name of the first oid. 
-				$currentTag = oid_name(oid_techrevArr[$each_entry]);
-				
-				#Retrieve the name of the next oid
-				$nextTagm = oid_name(oid_techrevArr[$each_entry + 1]);
-				
-				if ($currentTag == $nextTagm)
-				{
-					eval "Something is broken at this location." output=>*
-					#eval " - - - - - - - - - - - - - - - - - - - - - - - " output=>*
-					#scroll the page to the problem OID
-					scroll_to_oid(oid_techrevArr[$each_entry + 1])
-					#Move the cursor to the start of the problem OID
-					goto_oid(oid_techrevArr[$each_entry + 1], -2)
-					#begin selection
-					mark begin
-					#Move cursor to the end of the problem OID
-					goto_oid(oid_techrevArr[$each_entry + 1], -3)
-					#end selection
-					mark end
-					#and done.
-					break;
-				}	
-			}
-			
-			#this detects if there is nested change markup. #scrolls to the end tag.
-			#the change bars should have the same parent. otherwise, change bar is nested. 
-			if(oid_name(oid_techrevArr[$each_entry]) == "tech:revend")
-			{
-				$vCurrentEndTag = oid_parent(oid_techrevArr[$each_entry])
-				$vPreviousStartTag = oid_parent(oid_techrevArr[$each_entry-1])
-				
-				if($vCurrentEndTag != $vPreviousStartTag)
-				{
-					eval "This change markup is incorrectly nested." output=>*
-					#scroll the page to the end tag
-					scroll_to_oid(oid_techrevArr[$each_entry])
-					#Move the cursor to the start of the end tag
-					goto_oid(oid_techrevArr[$each_entry], -2)
-					#begin selection
-					mark begin
-					#Move cursor to the end of the end tag
-					goto_oid(oid_techrevArr[$each_entry], -3)
-					#end selection
-					mark end
-					break
-				}
-			}
-			
-			#this saves the count of each entry to new variable (which is the count of of the number of loops)
-			#fyi: each_entry does not exist outside of this loop. 
-			$neweach_entry = $each_entry
-			
-			#display the names of the oids
-			#eval $currentTag." ".$nextTagm output=>*	
-		}
-		
-		#if the total amount of revbars is equal to the amount of loops (2 total rev bars, code loops through each one once)
-		#if code gets to this point and has not broken out, then there are no errors. 
-		if ($techrev_count == $neweach_entry)
-		{
-			eval "This document does not contain markup errors." output=>*
-		}
-	}
-	
-	
-		
-	#if only a single start or end tag in document. 
-	local startEmptyEndOne = count(oid_techStartArr) == 0 && count(oid_techEndArr) == 1; 
-	local startOneEndempty = count(oid_techStartArr) == 1 && count(oid_techEndArr) == 0;
-	
-	if (startEmptyEndOne || startOneEndempty)
-	{
-		#if only one end, scroll to tech:revend
-		if (startEmptyEndOne)
-		{
-			eval "This document only contains a single tech:revend." output=>*
-			#scroll the page to the problem OID
-			scroll_to_oid(oid_techEndArr[1])
-			#Move the cursor to the start of the problem OID
-			goto_oid(oid_techEndArr[1], -2)
-			#begin selection
-			mark begin
-			#Move cursor to the end of the problem OID
-			goto_oid(oid_techEndArr[1], -3)
-			#end selection
-			mark end
-		}
-		
-		#if only one start, scroll to tech:revst	
-		if (startOneEndempty)
-		{
-			eval "This document only contains a single tech:revst." output=>*
-			#scroll the page to the problem OID
-			scroll_to_oid(oid_techStartArr[1])
-			#Move the cursor to the start of the problem OID
-			goto_oid(oid_techStartArr[1], -2)
-			#begin selection
-			mark begin
-			#Move cursor to the end of the problem OID
-			goto_oid(oid_techStartArr[1], -3)
-			#end selection
-			mark end
-		}
-				
-	}
-	
-	if  (count(oid_techStartArr) == 0 && count(oid_techEndArr) == 0) 
-	{ 
-		eval "This document does not contain change markup." output=>*
-	}
-		
-	#eval "\n\n=============END================" output=>* 
-			
-}
-			
-			</code>
-			</div>
-        </div>
+    <div class="container">
+        <br>
+        <h2 class="heading">Interfacing Topics in Manuals</h2>
+        <p>An interface occurs when multiple information sources share content, either explicitly or in concept. 
+            Documents are identified as having interfaces with other documents that describe similar content, even though the verbiage and context may not be identical.</p>
+        
+        <p>Example of an Interfacing topic between multiple departments:</p>
+        <p><b>Aircraft Weight</b>--the weight of an aircraft if required to be documented and affects multiple working groups.</p>
+        <ul>
+            <li>The Weight and Balance manual contains all of the regulated information on how to weight an aircraft. </li>
+            <li>Maintenance: The maintenance workers do the actual weighing of the aircraft. </li>
+            <li>Flight Operations: Pilots </li>
+            <li>Inflight Flight Attendants: Record the count of passengers and move to different seats if required for balancing.</li>
+            <li>Ground Operations: Make </li>
+        </ul>
+        <p>Interfacing Topics uses the following components:<ul>
+            <li><a href="#iface1">Interface Manger:</a> XML Meta-tagging via to tag topics that interface.</li>
+            <li><a href="#iface2">Automation</a> to update interfaces that changed section number/titles/publication dates. </li>
+            <li>Extract data from XML manuals, load into QuickBase, searchable dashboard.</li>
+            <li>Generate reports on interfacing content for subject matter experts. </li>
+            <li><a href="#iface3">Automation</a> to find topics that interfaced with current document. </li>
+        </ul></p>
+        <h3 id="iface1">Interface Manager</h3>
+        <p>The Interface Manager is used to insert interface tags. Inserting interface tags via the Interface Manager ensures the tags are built using the most up to date content. The Interface Manager lists the sections that a manual can interface to.</p>
+        <p>The custom dialog boxes are created using XUI (XML-based User Interface) and JavaScript.</p>
+        <img src="images/interface-manager.PNG" />
+        <p>Screenshot of the custom dialog boxes using XML, XUI, and JavaScript. </p>
+        <img src="images/interface-manager-xml.PNG" />
+        <p>The technical writer can insert the interface meta tag without manually typing any attributes (which reduces human error). </p>
+        <p>Example of an interface tag at a section level. This was inserted via the Interface Manager. </p>
+        <img src="images/iface-tags.PNG"/>
     </div>
+    <div class="container">
+        <h3 id="iface2">Automation for Topic Interfacing</h3>
+        <p>I have developed multiple automation functions to help manage and keep accurate information on interfaces.  </p>
+        <p>This function looks for other manuals that interface to it and automatically insert them for the user. </p>
+
+        <pre>
+            <code class="language-bash">
+    ##################################################
+    # MISSING EXTERNAL MUTUAL INTERFACES FUNCTIONS
+    ##################################################
+    # ---------------------------------------------------
+    #Lists all Missing External Mutual Interfaces
+    # --------------------------------------------------- 
+    function listMissingExternalIfaces() {
+        $localCount=0;
+        $knownmissingcount=0;
+        $countUpdatedBooks=0;
+        $childBookCount=0;
+        $matchingExternal="";
+        $iCurrentSection="";
+        $iPreviousSection="";
+        $ifacesNeedUpdating="false";
+        $findbook="";
+        $mutualexternalmissinginterfacesRun="";
+        $mutualexternalmissinginterfacesRunBOOK="";
+        delete($localIfaceOID);
+        delete($localIfacesLocationID);
+        delete($matchingRemote);
+        delete($localIfaceREFTO);
+        delete($knownMissingREFTO);
+        delete($knownMissingTEXT);
+        delete($knownMissingBOOKS);
+        delete($knownMissingParentxID);
+        delete($knownMissingLOC);
+        delete($knownMissingTITLE);
+        delete($knownMissingREVDATE);
+        delete($knownMissingREVNUM);
+        delete($printEBooks);
+        delete($printESectionTitle);
+        delete($printESectionText);
+        delete($knownMissingGOTOBOOK);
+            
+        #index the manual
+        indexManual()
+        #change bookname to a string so can be passed into oid_attr
+        $findbook="".$manualBookName.""
+            
+        #find only the external ifaces (no non-xml or internal ifaces)
+        if(oid_valid($ifaceOID[1])) {
+            for ($everyIface in $ifaceOID) {
+                if (oid_attr($ifaceOID[$everyIface],"refto")!="non-xml") {
+                    
+                    if (tolower(oid_attr($ifaceOID[$everyIface],"refdoc"))!=$findbook) {
+                        $localCount++
+                        $localIfaceOID[$localCount]=$ifaceOID[$everyIface];
+                        $localIfacesLocationID[$localCount]=$ifaceLocationID[$everyIface]; 
+                        $localIfaceREFTO[$localCount]=$ifaceREFTO[$everyIface]
+                    }
+                }
+            }
+        
+            #open the interface datafile.
+            local $browseToDatafile = "P:/Public/Assets/ArbortextCatalogs/InterfaceDatafile/InterfaceDatafile.xml"
+            edit -nw -readonly -xml $browseToDatafile
+            
+            #find all the children with $manualBookName == iface_loc @refdoc
+            $childBookCount=oid_find_child_attrs(oid_first(), matchingRemote, "refdoc", $findbook)
+            
+            #for every remote iface, check if theres a matching iface in local book.
+            if (oid_valid($matchingRemote[1])) {
+                for ($eachRemote in $matchingRemote) {
+                    
+                    #do not collect internal iface in remote. 
+                    if(oid_attr(oid_parent($matchingRemote[$eachRemote]),"xreflabel")!=$findbook) {
+                    
+                        $matchingExternal="false";
+                        
+                        if (oid_valid($localIfaceOID[1])) {
+                            for ($eachLocal in $localIfaceOID){
+                                if(oid_attr($matchingRemote[$eachRemote],"refto") != $localIfacesLocationID[$eachLocal]) {
+                                    #if it doesnt match -- do nothing, keep checking each local iface.
+                                } 
+                                if (oid_attr($matchingRemote[$eachRemote],"refto") == $localIfacesLocationID[$eachLocal]) {
+                                    if($localIfaceREFTO[$eachLocal] == oid_attr($matchingRemote[$eachRemote],"iface_parentxID")){
+                                        $matchingExternal="true";	
+                                        #there is a correct matching external mutual iface. 
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+                        #if went through all local ifaces, and no match was found. 
+                        if ($matchingExternal=="false")	{
+                            #these are the external ifaces that are missing ifaces in local current manual. 
+                            $knownmissingcount++
+                            $knownMissingREFTO[$knownmissingcount]=oid_attr($matchingRemote[$eachRemote],"refto")
+                            $knownMissingTEXT[$knownmissingcount]=toupper(oid_attr(oid_parent($matchingRemote[$eachRemote]),"xreflabel"))." ".oid_attr($matchingRemote[$eachRemote], "iface_parentNUMBER")." ".oid_attr($matchingRemote[$eachRemote], "iface_parentTITLE")
+                            
+                            #parent BOOK (REFDOC)
+                            $knownMissingBOOKS[$knownmissingcount]=oid_attr(oid_parent($matchingRemote[$eachRemote]),"xreflabel")
+                            #eval "\n.REFDOC: ".$knownMissingBOOKS[$knownmissingcount] output=>*
+                            
+                            #which book does the iface point to
+                            $knownMissingGOTOBOOK[$knownmissingcount]=oid_attr($matchingRemote[$eachRemote],"refdoc")
+                            
+                            #xID of parent section. (REFTO)
+                            $knownMissingParentxID[$knownmissingcount]=oid_attr($matchingRemote[$eachRemote],"iface_parentxID")
+                            #eval "\n.REFTO: ".$knownMissingParentxID[$knownmissingcount] output=>*
+                            
+                            #parent section number (REFLOC)
+                            $knownMissingLOC[$knownmissingcount]=oid_attr($matchingRemote[$eachRemote], "iface_parentNUMBER")
+                            #eval "\n.REFLOC: ".$knownMissingLOC[$knownmissingcount] output=>*
+                                            
+                            #parent section title (REFTITLE)
+                            $knownMissingTITLE[$knownmissingcount]=oid_attr($matchingRemote[$eachRemote], "iface_parentTITLE")
+                            #eval "\n.REFTILE: ".$knownMissingTITLE[$knownmissingcount] output=>*
+                            
+                            #parent revdate (REFREVDATE)
+                            $knownMissingREVDATE[$knownmissingcount]=oid_attr(oid_parent($matchingRemote[$eachRemote]),"revdate")
+                            #eval "\n.REFREVDATE: ".$knownMissingREVDATE[$knownmissingcount] output=>*
+                            
+                            #parent revnumber (REFREVNUM)
+                            $knownMissingREVNUM[$knownmissingcount]=oid_attr(oid_parent($matchingRemote[$eachRemote]),"revnum")
+                            #eval "\n.REFREVNUM: ".$knownMissingREVNUM[$knownmissingcount] output=>*
+                        }
+                    }
+                }
+                file_close()
+                $mutualexternalmissinginterfacesRun="true";
+                $mutualexternalmissinginterfacesRunBOOK=$manualBookName;
+                
+                #loop through mastertocOID so we can group by local section number/name. 
+                #capture in separate array so do not eval Broken interfaces. * IMPORTANT
+                if (count($knownMissingREFTO)>0) { 
+                    for ($eachOID in $mastertocID) {	
+                        for($eachRemote2 in $knownMissingREFTO) {
+                            if($mastertocID[$eachOID]==$knownMissingREFTO[$eachRemote2]) {
+                                $ifacesNeedUpdating="true"
+                                $countUpdatedBooks++
+                                $printEBooks[$countUpdatedBooks]=$knownMissingBOOKS[$eachRemote2]
+                                $printESectionTitle[$countUpdatedBooks]=$mastertocLOCATION[$eachOID]
+                                $printESectionText[$countUpdatedBooks]=$knownMissingTEXT[$eachRemote2]
+                            } 
+                        }
+                    }
+                }
+                #build the report
+                eval "\n=====================================" output=>*
+                eval "\nMISSING EXTERNAL INTERFACES REPORT " output=>*
+                eval "\n".$manualTitle output=>*
+                eval "\nRevision Number: ".$manualRevnumber output=>*
+                eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
+                eval "\nReport Run: ".time_date() output=>*
+                eval "\nRun by: ".username() output=>*
+                eval "\n-------------------------------------\n" output=>*	
+                
+                if($ifacesNeedUpdating=="true") {
+                    eval "\n\nThe following ".toupper($manualBookName)." sections are missing external interfaces: \n" output=>*
+                    qsort($printEBooks)
+                    for($eachBook in $printEBooks) {
+                        if ($printEBooks[$eachBook-1] != $printEBooks[$eachBook]){
+                            eval toupper($printEBooks[$eachBook])."  " output=>*
+                        }
+                    }
+                    for($eachEIface in $printESectionTitle) {
+                        $iSectionTitle = $printESectionTitle[$eachEIface]
+                        $iCurrentSection = $iSectionTitle 
+                        
+                        #only eval section title if current and previous section names are different.  
+                        if($iCurrentSection != $iPreviousSection) {
+                            eval "\n\n\n\n\n".$iCurrentSection."\n   -Missing: [ ".$printESectionText[$eachEIface]." ]" output=>*
+                        } else {
+                            eval "\n   -Missing: [ ".$printESectionText[$eachEIface]." ]" output=>*
+                        }
+                        $iPreviousSection = $iCurrentSection;
+                    }
+                } else {
+                    eval "\nThe ".toupper($manualBookName)." is NOT missing interfaces to any manuals. \n" output=>*
+                }
+            } else {
+                file_close()
+                message_box("No manuals interface to this manual.", 0x00, "Arbortext Error")
+            }
+        } else {
+            message_box("There are no interfaces in this manual.", 0x00, "Arbortext Error")
+        }
+    }
+    
+    # ------------------------------------------------
+    #Updates Missing External Mutual Interfaces
+    # ------------------------------------------------
+    function updatemissingexternalifaces() {
+        
+        #this function adds missing external ifaces automcatically. 
+        #use the array from previous function. 
+        $countCorrected=0;
+        $newExternalIface="";
+        $iSectionTitle2="";
+        $iCurrentSection2="";
+        $iPreviousSection="";
+        $viewingBookName="";
+        
+        if ($mutualexternalmissinginterfacesRun=="true") {
+            
+            #find the xreflabel. Confirm this is the same manual the report was run on. 
+            $viewingBookName=oid_attr(oid_first_tag(), "xreflabel"); 
+            if ($mutualexternalmissinginterfacesRunBOOK==$viewingBookName) {
+            
+                $IfaceMissingProceed=response("Confirm update all missing external interfaces?", "Yes", "No")
+                if($IfaceMissingProceed==1) {
+                    
+                    eval "\n=====================================" output=>*
+                    eval "\nUPDATE MISSING EXTERNAL INTERFACES REPORT " output=>*
+                    eval "\n".$manualTitle output=>*
+                    eval "\nRevision Number: ".$manualRevnumber output=>*
+                    eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
+                    eval "\nReport Run: ".time_date() output=>*
+                    eval "\nRun by: ".username() output=>*
+                    eval "\n-------------------------------------\n" output=>*	
+    
+                    if($knownmissingcount>0) {
+                        eval "\n\n\n\nExternal Interfaces were added to the ".toupper($manualBookName)." at the following locations: " output=>*
+                        #loop through entire toc and compare to array with known missing
+                        for ($eachY in $mastertocID) {
+                            
+                            for($eachZ in $knownMissingParentxID) {
+                                if($mastertocID[$eachY]==$knownMissingREFTO[$eachZ]) {           
+                                    if($knownMissingGOTOBOOK[$eachZ]==$manualBookName) {
+                                    
+                                        $countCorrected++
+                                        #get the lastupdated timestamp. 
+                                        getTimeDate("1")
+                                        
+                                        sub("e","",username(),$empnum)
+                                        local $xid=$empnum+1111.time().$countCorrected
+                                        
+                                        #build the iface tag. 
+                                        $newExternalIface="<iface id=\"x".$xid."\" lastupdated=\"".$timeDateFinal."\" rank=\"n\" refdoc=\"".toupper($knownMissingBOOKS[$eachZ])."\" refloc=\"".$knownMissingLOC[$eachZ]."\" refrevdate=\"".$knownMissingREVDATE[$eachZ]."\" refrevnum=\"".$knownMissingREVNUM[$eachZ]."\" reftitle=\"".$knownMissingTITLE[$eachZ]."\"refto=\"".$knownMissingParentxID[$eachZ]."\"/>"
+    
+                                        #find the title and move cursor after title. 
+                                        oid_find_children($mastertocOID[$eachY], firstTitleTag, "title", 0x01)
+                                        goto_oid(firstTitleTag[1], -3)
+                                        
+                                        #insert the iface tag. 
+                                        insert_string -markup "$newExternalIface"
+                                        
+                                        #eval the section title the ifaces was inserted to. 
+                                        $iSectionTitle2 = $mastertocLOCATION[$eachY]
+                                        $iCurrentSection2 = $iSectionTitle2 
+                                        if($iCurrentSection2 != $iPreviousSection) {
+                                            eval "\n- ".$iCurrentSection2 output=>*
+                                        } 
+                                        $iPreviousSection = $iCurrentSection2;
+                                    }
+                                }
+                            }
+                        }
+                        #eval total count.
+                        eval "\n\n\n\nTotal number of External Interfaces added: ".$countCorrected output=>*
+                    } else {
+                        eval "\nThe ".toupper($manualBookName)." is NOT missing interfaces to any manuals. \n" output=>*
+                    }
+                }
+            } else {
+                message_box("Data does not match current manual. \nRun List Missing External Interfaces.",0x00+0x10, "Arbortext Error")
+            }
+        } else {
+            message_box("Run List Missing External Interfaces.", 0x00, "Arbortext Error")
+        }
+    }
+            </code>
+        </pre>
+    </div>
+    <div class="container">
+        <h3 id="iface3">
+            Reporting - List All Revised Interfaces
+        </h3>
+        <ul>
+            <li>This report shows only new or revised interfaces. </li>
+            <li>This report was directly requested from Senior Leadership to understand what topics were being revised. </li>
+        </ul>
+        <p>
+
+        </p>
+        <pre>
+            <code class="language-bash">
+    ############################################################
+    #interface reporting functions
+    ############################################################
+    
+    #LIST INTERFACES - REVISED SECTIONS ONLY
+    #shows a interfaces for only revised sections. 
+    function listRevisedIfacesReport() {
+    
+        $listRevIface=0;
+        $sortTitle=0
+        $sortRIfaces=0;
+        delete($ifaceRevisionSectionTITLE);
+        delete($ifaceRevisionSectionOID);
+        delete($ifaceRevisedLASTUPDATED);
+        delete($ifaceRevisedREFDOC);
+        delete($ifaceRevisedREFDOC2);
+        delete($ifaceRevisedREFLOC);
+        delete($ifaceRevisedREFREVDATE);
+        delete($ifaceRevisedREFREVNUM);
+        delete($ifaceRevisedREFTITLE);
+        delete($sortMyManualTITLE);
+        delete($sortMyManualOID);
+        delete($sortMyInterfaces);
+                
+        
+        if (oid_valid($ifaceExistOID[1])) {
+        
+            #find which ifaces with ifaceLocationOID that match the IfaceExistOID
+            for ($eacheOID in $ifaceExistOID) {
+            
+                for ($eachiOID in $ifaceLocationOID) {
+                
+                    if($ifaceExistOID[$eacheOID]==$ifaceLocationOID[$eachiOID]) {
+                    
+                        $listRevIface++
+                        $ifaceRevisionSectionTITLE[$listRevIface]=$ifaceTITLE[$eachiOID];
+                        $ifaceRevisionSectionOID[$listRevIface]=$ifaceLocationOID[$eachiOID]
+                        
+                        $ifaceRevisedLASTUPDATED[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "lastupdated");
+                        $ifaceRevisedREFDOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");
+                        $ifaceRevisedREFDOC2[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");#this used to qsort manual titles. 
+                        $ifaceRevisedREFLOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refloc");
+                        $ifaceRevisedREFREVDATE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevdate");
+                        $ifaceRevisedREFREVNUM[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevnum");
+                        $ifaceRevisedREFTITLE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "reftitle");
+                    }
+                }
+            }
+            
+            eval "\n================================" output=>*
+            eval "\nLIST INTERFACES - REVISED SECTIONS ONLY" output=>*
+            eval "\n".$manualTitle output=>*
+            eval "\nRevision Number: ".$manualRevnumber output=>*
+            eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
+            eval "\nReport Run: ".time_date() output=>*
+            eval "\nRun by: ".username() output=>*
+            eval "\n--------------------------------" output=>*
+            eval "\n\n\nThis report lists interfaces for sections that were updated with this revision." output=>*
+            eval "\n\n\n\nTotal Interfaces: ".$listRevIface output=>*
+            eval "\n\n\nInterfaced Documents: \n" output=>*
+            
+            #list all the manuals that are reference documents for this report. 
+            qsort($ifaceRevisedREFDOC2)
+            for (manual in $ifaceRevisedREFDOC2){
+                if ($ifaceRevisedREFDOC2[manual-1] != $ifaceRevisedREFDOC2[manual]) {
+                    eval $ifaceRevisedREFDOC2[manual]."\n" output=>*
+                }
+            }
+            #build an array of section titles only listed once and still in toc order (not qsort)
+            for (xy in $ifaceRevisionSectionOID) {
+                if ($ifaceRevisionSectionTITLE[xy-1] != $ifaceRevisionSectionTITLE[xy]) {
+                    $sortTitle++
+                    $sortMyManualTITLE[$sortTitle]=$ifaceRevisionSectionTITLE[xy]
+                    $sortMyManualOID[$sortTitle]=$ifaceRevisionSectionOID[xy]
+                }
+            }
+            #find the ifaces per section. Qsort the list to alphabetize. Print section title and ifaces per section. 
+            for ($eachc in $sortMyManualOID) {
+                delete($sortMyInterfaces);
+                $sortRIfaces=0;
+                for ($eachx in $ifaceRevisionSectionOID) {
+                    if($sortMyManualOID[$eachc]==$ifaceRevisionSectionOID[$eachx]) {
+                        $sortRIfaces++
+                        $sortMyInterfaces[$sortRIfaces]=toupper($ifaceRevisedREFDOC[eachx])."  ".$ifaceRevisedREFREVNUM[eachx]."  ".$ifaceRevisedREFREVDATE[eachx]."  ".$ifaceRevisedREFLOC[eachx]." ".$ifaceRevisedREFTITLE[eachx]."\n"
+                    }
+                }
+                qsort($sortMyInterfaces); 
+                eval "\n[".$sortMyManualTITLE[$eachc]."]\n" output=>*
+                for ($eachr in $sortMyInterfaces) {
+                    eval $sortMyInterfaces[$eachr] output=>*
+                }			
+            }
+        #if no interfaces exist in revised sections. 
+        } else if (oid_valid($ifaceOID[1]) && !oid_valid($ifaceExistOID[1])){
+            message_box("There are no interfaces in revised sections.",0x30);
+        } else {
+            message_box("Index manual OR no interfaces exist in this manual.",0x30);
+        }
+    }
+            </code>
+        </pre>
+    </div>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>

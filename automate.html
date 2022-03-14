@@ -6,187 +6,497 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mercedez Sylvia Portfolio</title>
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark.min.css">
+
+
+
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
 <body>
-	<div>
         <div class="container">
-            <div class="row">
-                <div>
-                    <h2 class="heading">Automation Collection</h2>
-					<p>Overall goal of these automation functions are to increase efficiency and quality, while reducing risk and waste.</p>
-                </div>
-				<div>
-				<h3>
-				Update Graphic Heights
-				</h3>
-				<p>The graphic height is calculated when the Update Image Heights or Set Single Image Height command is run. It calculates the height in relation to the width attribute. It determines the height of the graphic in the final output of the HTML document.</p>
-				<p>If there is no width attribute set, the height is not set when the command is run.</p>
-				</div>
-				<div id="pre">
-					
-<code>
-function updateImageHeight(){
+              <div class="row">
+                    <div>
+                        <br>
+                        <h2 class="heading">Automation Collection</h2>
+                        <p>Overall goal of these automation functions are to increase efficiency and quality, while reducing risk and waste.</p>
+                    </div>
+              </div>
+          <div>
+              <h3>
+              Update Graphic Heights
+              </h3>
+              <ul>
+                <li>Works for both inline graphics and entity graphics. </li>
+                <li>Can be used on a single graphic, a segment of content (a single section with multiple graphics), or the book (all graphics in the manual). </li>
+                <li>It calculates the height in relation to the width attribute. If there is no width attribute set, the height is not set when the command is run. </li>
+                <li>Uses JavaScript to complete the math conversion. </li>
+            </ul>
+          </div>
+            <pre>
+            <code class="language-bash">
+            function updateImageHeight(){
 
-	delete($oid_graphics);
-	delete($oid_inlinegraphics);
-	$graphicsUpdated=0;
-	$inlineGraphicsUpdated=0;
-	$missingWidth=0;
-	$currentGraphicHeight="";
-	$currentGraphicWidth="";
-	$newGrapicHeight="";
-	$currentInlWidth="";
-	$currentInlHeight="";
-	$newInlHeight="";
+                delete($oid_graphics);
+                delete($oid_inlinegraphics);
+                $graphicsUpdated=0;
+                $inlineGraphicsUpdated=0;
+                $missingWidth=0;
+                $currentGraphicHeight="";
+                $currentGraphicWidth="";
+                $newGrapicHeight="";
+                $currentInlWidth="";
+                $currentInlHeight="";
+                $newInlHeight="";
 
-	oid_find_children(oid_first(), oid_graphics, "graphic")			
-	oid_find_children(oid_first(), oid_inlinegraphics, "inlinegraphic")
+                #create arrays of all entity graphics and inline graphics
+                oid_find_children(oid_first(), oid_graphics, "graphic")
+                oid_find_children(oid_first(), oid_inlinegraphics, "inlinegraphic")
 
-	#graphics
-	if(count($oid_graphics)>0) {
-		for($eachGraphic in $oid_graphics)
-		{
-			oid_graphic_size($oid_graphics[$eachGraphic], imgWidth, imgHeight, 1)
-			$currentGraphicHeight=oid_attr($oid_graphics[$eachGraphic], "height")
-			$currentGraphicWidth=oid_attr($oid_graphics[$eachGraphic], "width")
-			
-			#The height is only calculated if there is a width attribute set.	
-			if($currentGraphicWidth!=""){
-				#find the correct height in pixels
-				$newGrapicHeight=javascript("(((".javascript(substr($currentGraphicWidth,1,(length($currentGraphicWidth)-2))." * 96")." * ".imgHeight.")/".imgWidth.")).toFixed(0)")."px";
-			
-				#if height missing or if current height doesnt match new height, set new height. 
-				if($currentGraphicHeight=="" || $currentGraphicHeight!=$newGrapicHeight){
-					#set the attribute height.			
-					oid_modify_attr($oid_graphics[$eachGraphic], "height", $newGrapicHeight)
-					$graphicsUpdated++
-				}
-			}
-			else{
-				$missingWidth++
-				$missingGraphicWidth[$missingWidth]=oid_attr($oid_graphics[$eachGraphic], "entityref")
-			}
-		}
-	}
-	#inlinegraphics
-	if(count($oid_inlinegraphics)>0){	
-		for($eachInlineGraphic in $oid_inlinegraphics){
-			oid_graphic_size(oid_inlinegraphics[eachInlineGraphic], inlWidth, inlHeight, 1)
-			$currentInlWidth=oid_attr(oid_inlinegraphics[eachInlineGraphic], "width")
-			$currentInlHeight=oid_attr(oid_inlinegraphics[eachInlineGraphic], "height")
-			
-			#The height is only calculated if there is a width attribute set.		
-			if($currentInlWidth!=""){
-				#Get height in pixels
-				$newInlHeight=javascript("(((".javascript(substr($currentInlWidth,1,(length($currentInlWidth)-2))." * 96")." * ".inlHeight.")/".inlWidth.")).toFixed(0)")."px"; 
-			
-				#if height is missing or if current height does not match new height, set new height. 
-				if($currentInlHeight=="" || $currentInlHeight!=$newInlHeight){
-					#set the attribute height.			
-					oid_modify_attr($oid_inlinegraphics[$eachInlineGraphic], "height", $newInlHeight)
-					$inlineGraphicsUpdated++
-				}				
-			}
-			else{
-				$missingInlWidth++
-				$missingInlGraphicWidth[$missingInlWidth]="true"
-			
-			}
-		}
-	}
-	if(count($oid_graphics)==0 && count($oid_inlinegraphics)==0){
-		message_box("No graphics were found.", 0x00, "Update Image Heights")
-	}
-	else{
-		#Display message and popup window to show complete. 
-		if($graphicsUpdated>0){$graphicsMessage="\nGraphics updated: ".$graphicsUpdated}else{$graphicsMessage=""}
-		if($inlineGraphicsUpdated>0){$InlineMessage="\nInline Graphics updated: ".$inlineGraphicsUpdated}else{$InlineMessage=""}
-		#message_box("Image heights set.\n".$graphicsMessage.$InlineMessage, 0x00, "Update Image Heights") 	
-		eval "Image heights set.\n".$graphicsMessage.$InlineMessage output=>*
-	}
-	if(count($missingGraphicWidth)>0){
-		eval "\n\n\n\n\nThe following graphics are missing widths:" output=>*
-		for($eachgraphic in $missingGraphicWidth){
-			eval "\n   -".$missingGraphicWidth[$eachgraphic] output=>*
-		}
-	}
-	if(count($missingInlGraphicWidth)>0){
-		eval "\n\n\n\n\nRun Validate Inline Grapics" output=>*
-	}
-}
-</code>
-					
-				
-				</div>
+                #entity graphics
+                if(count($oid_graphics)>0) {
+                    for($eachGraphic in $oid_graphics){
+                        oid_graphic_size($oid_graphics[$eachGraphic], imgWidth, imgHeight, 1)
+                        $currentGraphicHeight=oid_attr($oid_graphics[$eachGraphic], "height")
+                        $currentGraphicWidth=oid_attr($oid_graphics[$eachGraphic], "width")
+
+                        #The height is only calculated if there is a width attribute set.
+                        if($currentGraphicWidth!=""){
+                            #find the correct height in pixels. Math conversion using Javascript. 
+                            $newGrapicHeight=javascript("(((".javascript(substr($currentGraphicWidth,1,(length($currentGraphicWidth)-2))." * 96")." * ".imgHeight.")/".imgWidth.")).toFixed(0)")."px";
+
+                            #if height missing or if current height doesnt match new height, set new height.
+                            if($currentGraphicHeight=="" || $currentGraphicHeight!=$newGrapicHeight){
+                                #set the attribute height.
+                                oid_modify_attr($oid_graphics[$eachGraphic], "height", $newGrapicHeight)
+                                $graphicsUpdated++
+                            }
+                        }
+                        #keep track of graphics missing width attr to notify user. 
+                        else{
+                            $missingWidth++
+                            $missingGraphicWidth[$missingWidth]=oid_attr($oid_graphics[$eachGraphic], "entityref")
+                        }
+                    }
+                }
+                #inline graphics
+                if(count($oid_inlinegraphics)>0){
+                    for($eachInlineGraphic in $oid_inlinegraphics){
+                        oid_graphic_size(oid_inlinegraphics[eachInlineGraphic], inlWidth, inlHeight, 1)
+                        $currentInlWidth=oid_attr(oid_inlinegraphics[eachInlineGraphic], "width")
+                        $currentInlHeight=oid_attr(oid_inlinegraphics[eachInlineGraphic], "height")
+
+                        #The height is only calculated if there is a width attribute set.
+                        if($currentInlWidth!=""){
+                            #Get height in pixels
+                            $newInlHeight=javascript("(((".javascript(substr($currentInlWidth,1,(length($currentInlWidth)-2))." * 96")." * ".inlHeight.")/".inlWidth.")).toFixed(0)")."px";
+
+                            #if height is missing or if current height does not match new height, set new height.
+                            if($currentInlHeight=="" || $currentInlHeight!=$newInlHeight){
+                                #set the attribute height.
+                                oid_modify_attr($oid_inlinegraphics[$eachInlineGraphic], "height", $newInlHeight)
+                                $inlineGraphicsUpdated++
+                            }
+                        }
+                        #keep track of graphics missing width attr to notify user. 
+                        else{
+                            $missingInlWidth++
+                            $missingInlGraphicWidth[$missingInlWidth]="true"
+
+                        }
+                    }
+                }
+                #if no graphics and no inline graphics, create pop up.
+                if(count($oid_graphics)==0 && count($oid_inlinegraphics)==0){
+                    message_box("No graphics were found.", 0x00, "Update Image Heights")
+                }
+                else{
+                    #Display message and popup window to show complete.
+                    if($graphicsUpdated>0){$graphicsMessage="\nGraphics updated: ".$graphicsUpdated}else{$graphicsMessage=""}
+                    if($inlineGraphicsUpdated>0){$InlineMessage="\nInline Graphics updated: ".$inlineGraphicsUpdated}else{$InlineMessage=""}
+                    #message_box("Image heights set.\n".$graphicsMessage.$InlineMessage, 0x00, "Update Image Heights")
+                    eval "Image heights set.\n".$graphicsMessage.$InlineMessage output=>*
+                }
+                #if missing widths were found, notify user of which graphic. outputs graphic name.
+                if(count($missingGraphicWidth)>0){
+                    eval "\nThe following graphics are missing widths:" output=>*
+                    for($eachgraphic in $missingGraphicWidth){
+                        eval "\n   -".$missingGraphicWidth[$eachgraphic] output=>*
+                    }
+                }
+                if(count($missingInlGraphicWidth)>0){
+                    eval "\nRun Validate Inline Grapics" output=>*
+                }
+            }
+            </code>
+            </pre>
+           </div>
+
+                
+            <div class="container">
+                <h3>
+                Modify Revision Date Attribute
+                </h3>
+                <p></p>
+                <ul>
+                    <li>A new company rule required date changes for sections that rolled. </li>
+                    <li>Sets all subsequent siblings and children sections revision date attribute to xx/xx/xxxx.</li>
+                    <li>Starts at the section the cursor is located. The dates are changed for subsequent siblings and children sections, but stops once the last subsequent section or end of the manual is reached.</li>
+                    <li>This function saves time (instead of changing dates one by one), reduces errors (missing sections, entering wrong date).</li>
+                </ul>
+              <pre>
+            <code class="language-bash">
+    function resetRevdate(){
+
+    #changes all the revdates for the currently selected element, all subsequent siblings, and the children of self and all siblings.
+    #Cursor placement is vital.
+
+    #Create a user input menu to explain and ensure this change is necessary. 
+    $choice = response("You are about to set the revision date attribute to xx/xx/xxxx for this element, and all child elements. Are you sure you want to proceed?", "Yes", "No")
+
+    # If 'OK' is selected, search and replace.
+    if ($choice==1) {
+
+        $countRevdateChanges=0;
+        delete($oid_revdates);
+
+        #Find the cursor location element.
+        $selectedElement=oid_current_tag();
+
+        #eval "\n Revdate Modified: ".oid_attr(selectedElement, "revdate") output=>*
+
+        #loop through all siblings starting with the selectedElement
+        while (oid_valid($selectedElement)){
+
+            #change the "revdate" attribute to "xx/xx/xxxx"	
+            oid_modify_attr(selectedElement, "revdate", "xx/xx/xxxx");
+
+                #Find child attributes that have a revdate.
+                oid_find_child_attrs(selectedElement, oid_revdates, "revdate");
+
+                if (oid_attr(selectedElement, "revdate")){
+                    $countRevdateChanges +=1;
+                }
+
+                #Change the revdate for the children of the selected element.
+                for($rdate in $oid_revdates){
+
+                    oid_modify_attr($oid_revdates[$rdate], "revdate", "xx/xx/xxxx");
+                    $countRevdateChanges +=1;
+                }
+            #next sibling
+            selectedElement = oid_next(selectedElement)
+        }
+
+        eval "\n Revdates changed: ".$countRevdateChanges output=>*
+    }
+
+
+            </code>
+      </pre>
             </div>
+   >
+    <div class="container">
+        <h3 id="webserver">
+            Web Server Hyperlink Automation
+        </h3>
+        <p>Southwest Airlines Employee website (SWALife) moved to Sharepoint, which does not support HTML manuals. A new content web server was created for all manuals (both PDF and HTML), and all manuals are now located on this web server.</p>
+        <p>Instead of Technical Writers manually updating all links to point to new the web server, I created automation to complete the task. Each manual can be completed in under 1 minute, saving time and reducing risk. </p>
+        <pre>
+            <code class="language-swift">
 
-				<div>
-				<h3>
-				Reset Revdate
-				</h3>
-				<p>Set Revision Dates to xx/xx/xxxx sets all subsequent siblings and children sections revision dates to xx/xx/xxxx. Starting at section the cursor is located, the dates are changed for subsequent siblings and children sections, but stops once the last subsequent section or end of the manual is reached.</p>
-				</div>
-			<div id="pre">
-			<code>
-	function resetRevdate(){
-	#This function changes all the revdates for the currently selected element, all subsequent siblings, and the children of self and all siblings. 
-	#Cursor placement is vital. 
-	
-	# Build the user input menu.
-	
-	$choice = response("You are about to set the revision date attribute to xx/xx/xxxx for this element, and all child elements. Are you sure you want to proceed?", "Yes", "No")
-	
-	# If 'OK' is selected, search and replace. 
-	if ($choice == 1 ) {	
-		
-		$countRevdateChanges =0;
-	
-		#Find the cursor location element.
-		selectedElement = oid_current_tag();
-				
-		#eval "\n Revdate Modified: ".oid_attr(selectedElement, "revdate") output=>*	
-		
-		#loop through all siblings starting with the selectedElement
-		while (oid_valid(selectedElement)){
-			
-				oid_modify_attr(selectedElement, "revdate", "xx/xx/xxxx");
-					
-				#eval " > ".oid_attr(selectedElement, "revdate") output=>*
-				
-				#Find child attributes that have a revdate.
-				oid_find_child_attrs(selectedElement, oid_revdates, "revdate");
-				
-				if (oid_attr(selectedElement, "revdate")){
-					$countRevdateChanges +=1;
-				}
-				
-				#Change the revdate for the children of the selected element.
-				for(rdate in oid_revdates){
-				
-					#eval "\n Revdate Modified: ".oid_attr(oid_revdates[rdate], "revdate") output=>*	
-					
-					oid_modify_attr(oid_revdates[rdate], "revdate", "xx/xx/xxxx");
-					
-					#eval " > ".oid_attr(oid_revdates[rdate], "revdate") output=>*
-					$countRevdateChanges +=1;
-				}
-			#next sibling
-			selectedElement = oid_next(selectedElement)	
-		}
-		
-		eval "\n Revdates changed: ".$countRevdateChanges output=>*
-	}
-	
-}	
-			</code>
-			</div>
-        </div>
+    ###########################
+    # CHECKS TO SEE IF NEED TO UPDATE LINKS TO NEW CP WEB SERVER.
+    ##########################
+    function updateUrlLinksCheck() {
+        
+        $matchFound=0;
+        $urlLinkText="";
+        $yesupdatelinks="false"
+        
+        # OLD PATH -- https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/smm/r00-00/pdfall/smm.pdf
+        # NEW PATH -- https://centralpubs.swalife.com/swa/b737/gfe/r00-00/html/index.html
+        
+        indexManual()
+        #if there are links.
+        if(count($linkReportLOCATION)>0) {
+            
+            for($eachLink1 in $linkReportTYPE){
+                if($linkReportTYPE[$eachLink1]=="url" && !match(tolower($linkReportURL[$eachLink1]), "mailto")) {
+                    #capture text of link;
+                    $urlLinkText=$linkReportURL[$eachLink1]
+                    
+                    #find if swalife path is found in string. 
+                    $matchFound=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737")
+                    
+                    #if path does exist, replace the beginning of path. 
+                    if($matchFound>0) {
+                        
+                        #if a single match is found, YES links need to be updated. 
+                        message_box("Yes, links need to be updated!",0x00)
+                        $yesupdatelinks="true"
+                        break;
+                    }
+                }
+            }
+            if($yesupdatelinks=="false"){
+                message_box("No, links DO NOT need to be updated!",0x00+0x10)
+            }
+        } else {
+            message_box("No links of any kind exist in this manual.",0x00)
+        }
+    }
+                
+
+###########################
+# UPDATES URL LINKS TO NEW CP WEB SERVER.
+##########################
+function updateUrlLinks() {
+    
+    $countLinkURL=0;
+    $matchFoundSWA=0;
+    $matchFoundAPOEM=0;
+    $matchFoundCOBPM=0;
+    $matchFoundCOC_E=0;
+    $matchFoundCOC_S=0;
+    $matchFoundESPM=0;
+    $matchFoundFASSI=0;
+    $matchFoundFRMP=0;
+    $matchFoundFDAP=0;
+    $matchFoundFDTM=0;
+    $matchFoundFQM=0;
+    $matchFoundGOSM=0;
+    $matchFoundICI=0;
+    $matchFoundMPM=0;
+    $matchFoundPBNPM=0;
+    $matchFoundSWOM=0;
+    $matchFoundWBMFB=0;
+    $urlLinkText="";
+    
+    # OLD PATH -- https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/smm/r00-00/pdfall/smm.pdf
+    # NEW PATH -- https://centralpubs.swalife.com/swa/b737/smm/r00-00/html/index.html
+    
+    indexManual()
+    #if there are links.
+    if(count($linkReportLOCATION)>0)
+    {
+        #for each link, make sure it is a URL link and not a MAILTO link. 
+        eval "\n=====================================" output=>*
+        eval "\nUPDATE URL LINKS" output=>*
+        eval "\n".$manualTitle output=>*
+        eval "\nRevision Number: ".$manualRevnumber output=>*
+        eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
+        eval "\nReport Run: ".time_date() output=>*
+        eval "\nRun by: ".username() output=>*
+        eval "\n-------------------------------------\n" output=>*
+        
+        for($eachLink1 in $linkReportTYPE){
+            if($linkReportTYPE[$eachLink1]=="url" && !match(tolower($linkReportURL[$eachLink1]), "mailto"))	{
+                #capture text of link;
+                $urlLinkText=$linkReportURL[$eachLink1]
+                
+                #APOEM
+                $matchFoundAPOEM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/floem/floem.pdf")
+                if($matchFoundAPOEM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/apoem/r00-00/pdfall/apoem.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #COBPM
+                $matchFoundCOBPM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/carry-on_baggage_program.pdf")
+                if($matchFoundCOBPM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/cobpm/r00-00/pdfall/cobpm.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #COC_E
+                $matchFoundCOC_E=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/coc_e/r00-00/pdfall/coc_e.pdf")
+                if($matchFoundCOC_E>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/coc_e/r00-00/pdfall/coc_e.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #COC_S
+                $matchFoundCOC_S=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/coc_s/r00-00/pdfall/coc_s.pdf")
+                if($matchFoundCOC_S>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/coc_s/r00-00/pdfall/coc_s.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #ESPM
+                $matchFoundESPM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/Exit_Seating_Program.pdf")
+                if($matchFoundESPM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/espm/r00-00/pdfall/espm.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #FA_SSI
+                $matchFoundFASSI=match($urlLinkText, "https://www.swalife.com/docs/inflight/secure/efb/fa_ssi.pdf ")
+                if($matchFoundFASSI>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/fam_ssi/r00-00/pdfall/fa_ssi.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #FRMP
+                $matchFoundFRMP=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/frmp.pdf")
+                if($matchFoundFRMP>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/frmp/r00-00/pdfall/frmp.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #FDAP
+                $matchFoundFDAP=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/fdap_iop/r00-00/pdfall/fdap_iop.pdf")
+                if($matchFoundFDAP>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/fdap/r00-00/pdfall/fdap.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #FDTM
+                $matchFoundFDTM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/fdtm/fdtm.pdf")
+                if($matchFoundFDTM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/fdtm/r00-00/pdfall/fdtm.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #FQM - PDF
+                $matchFoundFQM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/fqm/fqm.pdf")
+                if($matchFoundFQM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/fqm/r00-00/pdfall/fqm.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #GOSM
+                $matchFoundGOSM=match($urlLinkText, "https://www.swalife.com/docs/operations/secure/manuals/gosm/swa/b737/gosm/r00-00/html/index.html")
+                if($matchFoundGOSM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/gosm/r00-00/html/index.html".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #ICI
+                $matchFoundICI=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/ici/r00-00/pdfall/ici_reduced.pdf")
+                if($matchFoundICI>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/ici/r00-00/pdfall/ici.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #MPM - PDF
+                $matchFoundMPM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/mpm.pdf")
+                if($matchFoundMPM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/mpmfb/r00-00/pdfall/mpmfb.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #PBNPM
+                $matchFoundPBNPM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/pbnm/pbnpm.pdf")
+                if($matchFoundPBNPM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/pbnpm/r00-00/pdfall/pbnpm.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #SWOM
+                $matchFoundSWOM=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swom/swom.pdf")
+                if($matchFoundSWOM>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/swom/r00-00/pdfall/swom.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                
+                #WBMFB - PDF
+                $matchFoundWBMFB=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/programs/wb/wbm.pdf")
+                if($matchFoundWBMFB>0) {
+                    $countLinkURL++;
+                    $newURL=""."https://centralpubs.swalife.com/swa/b737/wbmfb/r00-00/pdfall/wbmfb.pdf".""
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                    $urlLinkText=$newURL
+                }
+                    
+                #find if SWA/B737 path is found in string. 
+                $matchFoundSWA=match($urlLinkText, "https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737")
+                
+                #if path does exist, replace the beginning of path. 
+                if($matchFoundSWA>0) {
+                    
+                    $countLinkURL++;
+                    
+                    #find everything after "b737"
+                    $linkTextRemaining=substr($urlLinkText,76)
+                    #eval $linkTextRemaining output=>*
+                    
+                    #replace swalife path up to and including "b737"
+                    $newPath="https://centralpubs.swalife.com/swa/b737"
+                    $newURL="".$newPath.$linkTextRemaining.""
+                    #eval $newURL output=>*
+                    
+                    $modifyWork=oid_modify_attr($linkReportOID[$eachLink1], "targetdoc", $newURL)
+                    #eval  "\n ".$modifyWork."---".$newURL output=>*
+                    
+                    #eval old link text and new link text. 
+                    eval "\n\n".$linkReportLOCATION[$eachLink1]."\n- ".$urlLinkText."\n+ ".oid_attr($linkReportOID[$eachLink1],"targetdoc")."\n\n" output=>*
+                }
+            }
+        }
+        if($countLinkURL>0){
+            eval "\n\nTotal number of URL Links updated: ".$countLinkURL output=>*
+        }
+        
+    } else {
+        message_box("Run Index Manual or no links exists.",0x00)
+    }
+}
+
+            </code>
+        </pre>
     </div>
+      <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+      <script>hljs.highlightAll();</script>
 </body>
 </html>

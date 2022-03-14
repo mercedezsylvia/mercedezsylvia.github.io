@@ -6,323 +6,572 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Mercedez Sylvia Portfolio</title>
-	<link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
-	<link rel="icon" href="favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+    <link rel="icon" href="favicon.ico" type="image/x-icon">
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark.min.css">
 </head>
 <body>
-	<div>
-        <div class="container">
-            <div class="row">
-                <div>
-                    <h2 class="heading">Validate Manual</h2>
-                </div>
-				<div>
-				<h3>
-				List Exception Links
-				</h3>
-				<p>This is my sumamry of List exception links.</p>
-				</div>
-				<div id="pre">
-					
-<code>
-	function listExceptionLinks(){
-	#List all exceptions links in manual. 
+    <div class="container">
+        <div class="row">
+              <div>
+                    <br>
+                  <h2 class="heading">Validate Manual</h2>
+                  
+                  
 
-	#display link error info. 
-	if (count($linkTARGETID) > 0)
-	{
-		#Heading information	
-		eval "\n=======================================" output=>*
-		eval "\nException Links Report" output=>*
-		eval "\n".$manualTitle output=>*
-		eval "\nRevision Number: ".$manualRevnumber output=>*
-		eval "\nRevision Date: ".$manualRevdate output=>*
-		eval "\nReport Run: ".time_date() output=>*
-		eval "\nRun by: ".username() output=>*
-		eval "\n=======================================\n" output=>*
-			
-		if($vExceptionLinkCount>0)
-		{
-			
-			for($eachvLinkOID in $vExceptionLink)
-			{
-				eval "\n\n [EXCEPTION]" output=>*
-				eval "\n\t Location: ".$vExceptionLinkLocation[$eachvLinkOID] output=>*
-				eval "\n\t Target ID: <".$vExceptionLink_Oidname[$eachvLinkOID]."> ".$vExceptionLinkTargetID[$eachvLinkOID] output=>*
-				eval "\n\t Current Text: ".$vExceptionLinkCurrentText[$eachvLinkOID] output=>*				
-			}
-			
-			eval "\n\n\n Exceptions Links: ".$vExceptionLinkCount output=>*		
-		}
-		else
-		{
-			eval "No Exception Links in this manual." output=>*	
-		}
-	}
-	else 
-	{
-		message "Run Index Manual"
-	}
-	
-	}
-</code>
-					
-				
-				</div>
-            </div>
-
-				<div>
-				<h3>
-				Validate Change Markup
-				</h3>
-				<p>This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.This is my sumamry of Validate markup.</p>
-				</div>
-			<div id="pre">
-			<code>
-			function validateMarkup(){	
-#Checks if two tech:revst or two tech:revend tags are subsequent. 
-#checks for nested change bars. 
-
-		
-    #clear the arrays
-	delete($oid_techStartArr);
-	delete($oid_techEndArr);
-	delete($oid_techrevArr);
-	$vCurrentEndTag = "";
-	$vPreviousStartTag = "";
-	$neweach_entry = 0;
-	
-	eval "\n================================ " output=*
-	eval "\nChange Markup Report " output=>*
-	eval "\nReport Run: ".time_date() output=>*
-	eval "\n" output=>*
-	eval "\n================================\n" output=>*
-	
-	
-	#Find all the instances of tech:revst and tech:revend and put them into separate arrays.
-	oid_find_children(oid_first(), oid_techStartArr, "tech:revst");
-	oid_find_children(oid_first(), oid_techEndArr, "tech:revend");
-	
-	#If tech:revst and tech:revend exist
-	if (count(oid_techStartArr) > 0 && count(oid_techEndArr) > 0)
-	{
-	
-		#Load all techStartArr items into combined array oid_techrevArr
-		for ($eachStart in oid_techStartArr)
-		{
-			#At each [position] of techrevArr, add each tech:revst from oid_techStartArr
-			oid_techrevArr[$eachStart] = oid_techStartArr[$eachStart];
-		}
-	
-		#Count the number of items in new oid_techrevArr (at this point, it is only tech:revsts). Need this to add tech:revends after the last tech:revst.
-		start_count = count(oid_techrevArr);
-		current_rev_count = start_count + 1;
-	
-		#Load all techEndArr items into combined array oid_techrevArr after the last tech:revst.
-		for ($eachEnd in oid_techEndArr)
-		{
-			#After the last tech:revst item, at each [position + 1] of techrevArr, add each tech:revend from oid_techStartArr. (Must use +1 so that the tech:revend does not override the tech:revst items already in the array.)
-			oid_techrevArr[current_rev_count] = oid_techEndArr[$eachEnd];
-			current_rev_count++;
-		}
-		
-		#display every item in the new oid_techrevArr
-		#for ($eachEntry3 in oid_techrevArr)
-		#{
-			#Change the tech:revst type to the current oid
-			#oid_modify_attr(oid_techrevArr[$eachEntry3],"type", oid_techrevArr[$eachEntry3])
-			#eval oid_techrevArr[$eachEntry3] output=>*
-		#}
-		
-		#create a line to separate unsorted and sorted
-		#eval " - - - - - - -complete array above- - - - - - - - - - " output=>*
-	
-		#sort oid_techrevArr by oid. This is not work. 
-		#qsort(oid_techrevArr);
-	
-
-		#insertion sort
-		local i; #i = index number of how many items in oid_techrevArr (e.g., 6 total)
-		local key; #key = index number of the specific item in oid_techrevArr (e.g., third item in the array)
-		local j; #j = index number of one less item. (e.g., the item one less than the key (e.g., the second item in the array)
-		local temp; #this holds the item temporarily to move forward in the array
-		local idNumbersCount = count(oid_techrevArr); #total number of items in oid_techrevArr
-	
-		#for as many items there are in oid_techrevArr. i = index
-		for (i = 0; i < idNumbersCount; i++)
-		{
-			#key = index number of item in oid_techrevArr
-			local key = oid_techrevArr[i];
-			#compare the current item i to the index number of one less (ex: compare index item 2 to index item 1)/ j = index number of one less item. 
-			local j = i - 1;
-		
-			#iterate though the list of items to left of index and swap elements if less. End loop when reach index 1 or when key value reaches item it is no longer smaller than. 
-			while (j >= 1 && key < oid_techrevArr[j])
-			{
-				temp = oid_techrevArr[j];
-				oid_techrevArr[j] = oid_techrevArr[j + 1];
-				oid_techrevArr[j + 1] = temp;
-				j--;
-			}
-		}
-
-		#display sorted oid_techrevArr
-		#for ($eachEntry2 in oid_techrevArr)
-		#{
-		#	eval oid_techrevArr[$eachEntry2] output=>*
-		#}
-		#eval " - - - - - - - - sorted above - - - - - - - - - - - - - - " output=>*
-	
-		#count how many items are in oid_techrevArr
-		$techrev_count=count(oid_techrevArr);
-	
-		#Retrieve the name of the oid  for every item in oid_techrevArr (will be tech:revst or tech:revend).
-		for($each_entry in oid_techrevArr)
-		{
-			#if first item is a tech:revend, break and display message.
-			if (oid_name(oid_techrevArr[1]) == "tech:revend")
-			{
-				eval "This document starts with a tech:revend." output=>*
-				#scroll the page to the problem OID
-				scroll_to_oid(oid_techrevArr[$each_entry])
-				#Move the cursor to the start of the problem OID
-				goto_oid(oid_techrevArr[$each_entry], -2)
-				#begin selection
-				mark begin
-				#Move cursor to the end of the problem OID
-				goto_oid(oid_techrevArr[$each_entry], -3)
-				#end selection
-				mark end
-				break;
-			}
-		
-			#if the total amount of revbars is NOT equal to the amount of loops (2 total rev bars, code loops through each one once)
-			#this means we have not reached the last change bar in the document. 
-			if($each_entry != $techrev_count)
-			{
-				#Retrieve the name of the first oid. 
-				$currentTag = oid_name(oid_techrevArr[$each_entry]);
-				
-				#Retrieve the name of the next oid
-				$nextTagm = oid_name(oid_techrevArr[$each_entry + 1]);
-				
-				if ($currentTag == $nextTagm)
-				{
-					eval "Something is broken at this location." output=>*
-					#eval " - - - - - - - - - - - - - - - - - - - - - - - " output=>*
-					#scroll the page to the problem OID
-					scroll_to_oid(oid_techrevArr[$each_entry + 1])
-					#Move the cursor to the start of the problem OID
-					goto_oid(oid_techrevArr[$each_entry + 1], -2)
-					#begin selection
-					mark begin
-					#Move cursor to the end of the problem OID
-					goto_oid(oid_techrevArr[$each_entry + 1], -3)
-					#end selection
-					mark end
-					#and done.
-					break;
-				}	
-			}
-			
-			#this detects if there is nested change markup. #scrolls to the end tag.
-			#the change bars should have the same parent. otherwise, change bar is nested. 
-			if(oid_name(oid_techrevArr[$each_entry]) == "tech:revend")
-			{
-				$vCurrentEndTag = oid_parent(oid_techrevArr[$each_entry])
-				$vPreviousStartTag = oid_parent(oid_techrevArr[$each_entry-1])
-				
-				if($vCurrentEndTag != $vPreviousStartTag)
-				{
-					eval "This change markup is incorrectly nested." output=>*
-					#scroll the page to the end tag
-					scroll_to_oid(oid_techrevArr[$each_entry])
-					#Move the cursor to the start of the end tag
-					goto_oid(oid_techrevArr[$each_entry], -2)
-					#begin selection
-					mark begin
-					#Move cursor to the end of the end tag
-					goto_oid(oid_techrevArr[$each_entry], -3)
-					#end selection
-					mark end
-					break
-				}
-			}
-			
-			#this saves the count of each entry to new variable (which is the count of of the number of loops)
-			#fyi: each_entry does not exist outside of this loop. 
-			$neweach_entry = $each_entry
-			
-			#display the names of the oids
-			#eval $currentTag." ".$nextTagm output=>*	
-		}
-		
-		#if the total amount of revbars is equal to the amount of loops (2 total rev bars, code loops through each one once)
-		#if code gets to this point and has not broken out, then there are no errors. 
-		if ($techrev_count == $neweach_entry)
-		{
-			eval "This document does not contain markup errors." output=>*
-		}
-	}
-	
-	
-		
-	#if only a single start or end tag in document. 
-	local startEmptyEndOne = count(oid_techStartArr) == 0 && count(oid_techEndArr) == 1; 
-	local startOneEndempty = count(oid_techStartArr) == 1 && count(oid_techEndArr) == 0;
-	
-	if (startEmptyEndOne || startOneEndempty)
-	{
-		#if only one end, scroll to tech:revend
-		if (startEmptyEndOne)
-		{
-			eval "This document only contains a single tech:revend." output=>*
-			#scroll the page to the problem OID
-			scroll_to_oid(oid_techEndArr[1])
-			#Move the cursor to the start of the problem OID
-			goto_oid(oid_techEndArr[1], -2)
-			#begin selection
-			mark begin
-			#Move cursor to the end of the problem OID
-			goto_oid(oid_techEndArr[1], -3)
-			#end selection
-			mark end
-		}
-		
-		#if only one start, scroll to tech:revst	
-		if (startOneEndempty)
-		{
-			eval "This document only contains a single tech:revst." output=>*
-			#scroll the page to the problem OID
-			scroll_to_oid(oid_techStartArr[1])
-			#Move the cursor to the start of the problem OID
-			goto_oid(oid_techStartArr[1], -2)
-			#begin selection
-			mark begin
-			#Move cursor to the end of the problem OID
-			goto_oid(oid_techStartArr[1], -3)
-			#end selection
-			mark end
-		}
-				
-	}
-	
-	if  (count(oid_techStartArr) == 0 && count(oid_techEndArr) == 0) 
-	{ 
-		eval "This document does not contain change markup." output=>*
-	}
-		
-	#eval "\n\n=============END================" output=>* 
-			
-}
-			
-			</code>
-			</div>
+              </div>
         </div>
     </div>
+    <div class="container">
+        <h3>
+            Validate Manual function
+        </h3>
+        <p>Overall goal of these functions is to catch known errors and pitfalls. </p>
+        <ul>
+            <li>A manual is indexed, which collects all relevant information throughout the 
+              manual such as section numbers and titles, dates, figure and table numbers/titles, attributes that control output, hyperlinks, and change markup. </li>
+            <li>This content is used in the function ValidateManual(). </li>
+            <li>A report is generated that displays the location of the error and the specific type of error found.</li>
+            <li>This function saves 1-2 hours of work every time content is generated (usually 5-6 times each revision). A Technical Writer can immediately run a report and fix common errors. Instead of generating output (PDF or HTML), finding errors, redoing working, and re-generating output. </li>
+        </ul>
+        <pre>
+            <code class="language-bash">
+function validateManual(){
+    #Validate manual for change markup, inline graphic @width, @revdate, graphic @width, broken/mismatched hyperlinks. 
+        #eval "" output=* clears the output screen
+        
+        revdatePROMPT="";
+        lepdatePROMPT="";
+        revLepdatePROMPT="";
+        graphicPROMPT="";
+        linksPROMPT="";
+    
+        if(count($mastertocOID)>0) {
+            #prompt to capture user selection. 
+            #Checkbox variable: 1=selected 0=not selected. 
+            readvar -prompt 'Select which items to validate:  ' \
+            -title 'Validate Manual Selection' \
+            -choice 'Revision Dates' -default 'Revision Dates' revdatePROMPT \
+            -choice 'LEP Dates' -default 'LEP Dates' lepdatePROMPT \
+            -choice 'Revdate / LEPdate Compare' -default 'Revdate / LEPdate Compare' revLepdatePROMPT \
+            -choice 'Graphics / Inlines' -default 'Graphics / Inlines' graphicPROMPT \
+            -choice 'Links' -default 'Links' -prompt 'Note: Change markup is always validated. ' linksPROMPT \
+            
+                        
+            #if 'OK' is selected on the readvar prompt.
+            if(main::status==0) {
+                $validateErrorFound = "false";
+    
+                #Heading information	
+                eval "\n=======================================" output=>*
+                eval "\nValidate Manual Report " output=>*
+                eval "\n".$manualTitle output=>*
+                eval "\nRevision Number: ".$manualRevnumber output=>*
+                eval "\nRevision Date: ".$manualRevdate output=>*
+                eval "\nReport Run: ".time_date() output=>*
+                eval "\nRun by: ".username() output=>*
+                eval "\n" output=>*
+                
+                #List which validate items are/not included in the report.
+                if(revdatePROMPT==0){eval "\n[ ]   Revision Dates" output=>* } else{eval "\n[X]   Revision Dates" output=>*}
+                if(lepdatePROMPT==0){eval "\n[ ]   LEP Dates" output=>* } else{eval "\n[X]   LEP Dates" output=>*}
+                if(revLepdatePROMPT==0){eval "\n[ ]   Revdate / LEPdate Compare" output=>* } else{eval "\n[X]   Revdate / LEPdate Compare" output=>*}
+                if(graphicPROMPT==0){eval "\n[ ]   Graphics / Inlines" output=>* } else{eval "\n[X]   Graphics / Inlines" output=>*}
+                if(linksPROMPT==0){eval "\n[ ]   Links" output=>* } else{eval "\n[X]   Links" output=>*}
+                
+                eval "\n" output=>*
+                eval "\n=======================================\n" output=>*
+                
+                if($changeMarkupFound == "true" || $inlineErrorFound == "true"){
+                    eval "\nValidate Manual Error" output=>*
+                    #valiate Change Markup start. 
+                    #If there is a single change markup error, state to run validate change markup. 
+                    if($changeMarkupFound == "true"){
+                        
+                        eval "\n\n    [Change Markup Error]\n" output=>*
+                        eval "        -".$changeMarkupResponse."\n" output=>*
+                        eval "        -".$changeMarkupError."\n" output=>*
+                        $validateErrorFound = "true";
+                    }
+                    
+                    #valiate inline graphics
+                    #if there is a single inline graphic error, state to run validate inline graphics. 
+                    if($inlineErrorFound == "true"){
+                        eval "\n\n\n    [Inline Graphics Error]\n" output=>*
+                        eval "        ".$InlineErrorResponse."\n" output=>*
+                        eval "        ".$InlineErrorMessage."\n" output=>*
+                        $validateErrorFound = "true";
+                    }
+                }
+    
+                #Start reporting on the validation
+                $vPreviousSection = "";
+                $vLinkErrorFound = "";
+                $vGraphicErrorFound = "";
+                $vDateErrorFound = "";
+                $vlepDateErrorFound = "";
+                $vPreviousSectionTechStOID = "";
+                $vNamespaceError = ""
+                $vMarkupDateError = "";
+                
+                #if errors exist, include line. 
+                if(count($revdateOID) > 0 || count($vGraphicTOCOID) > 0 ||count($vLinkOID) > 0 || count($vChgMarkupRevdateOID) > 0 || count($vSectionNamespace)>0){
+                    eval "\n---------------------------------------\n" output=>*
+                }
+                
+                #Loop through mastertocoid array once
+                #mastertocOID contains OIDs of every section in the TOC. 
+                for($eachmasterOID in $mastertocOID){
+                    #If anything in revdateOID exists AND was selected in the prompt, start checking for OID matches. 
+                    #revdateOID contains the OIDs of every section with a revdate error. 
+                    if (count($revdateOID) > 0 && revdatePROMPT==1) {
+                        $vDateErrorFound = "false"; #reset flag for every oid in array. 
+                        
+                        for(each_revdateOID in $revdateOID)	{
+                            #if the OID at revdateOID[] index matches the exact OID at mastertocOID[] index, an error is present. Set flag to true. 
+                            if($revdateOID[each_revdateOID] == $mastertocOID[$eachmasterOID]) {
+                                $vDateErrorFound = "true";
+                                $validateErrorFound = "true";
+                            }
+                        }
+                    }
+                    
+                    #lepdate check
+                    if (count($lepdateOID) > 0 && lepdatePROMPT==1) {
+                        $vlepDateErrorFound = "false"
+                        
+                        for (each_lepdateOID in $lepdateOID) {
+                            if ($lepdateOID[each_lepdateOID] == $mastertocOID[$eachmasterOID]) {
+                                $vlepDateErrorFound = "true"
+                                $validateErrorFound = "true"
+                            }
+                        }
+                    }			
+            
+                    #if anything in vGraphicTOCOID exists AND was selected in the prompt, start checking for OID matches. 
+                    #vGraphicTOCOID contains the OIDs of figures with width errors.
+                    if (count($vGraphicTOCOID) > 0 && graphicPROMPT==1){	
+                        $vGraphicErrorFound = "false"; #reset flag for every OID in array. 
+                        
+                        for($eachvGraphic in $vGraphicTOCOID) {
+                            #if the OID at vGraphicTOCOID[] index matches the exact OID at mastertocOID[] index, an error is present. Set flag to true. 
+                            if($vGraphicTOCOID[$eachvGraphic] == $mastertocOID[$eachmasterOID]) {
+                                $vGraphicErrorFound = "true";
+                                $validateErrorFound = "true";
+                            }
+                        }
+                    }
+                    
+                    #if anything in vLinkOID exists AND was selected in the prompt, start checking for OID matches.
+                    #vLinkOID contains the OIDs of hyperlinks that are broken/mismatched.
+                    if (count($vLinkOID) > 0 && linksPROMPT==1) {
+                        $vLinkErrorFound = "false";
+                            
+                        for ($eachvLinkOID in $vLinkOID) {
+                            if($vLinkOID[$eachvLinkOID] == $mastertocOID[$eachmasterOID]) {
+                                $vLinkErrorFound = "true";
+                                $validateErrorFound = "true";
+                            }
+                        }
+                    }
+                    
+                    
+                    #if anything in ChgMarkupRevdateOID exists AND was selected in the prompt, check for OID matches
+                    #ChgMarkupRevdateOID contains OIDs of sections with revdates that do not match book revision date. 
+                    if (count($vChgMarkupRevdateOID) > 0 && revLepdatePROMPT==1) {
+                        $vMarkupDateError = "false";
+                            
+                        for ($eachvMarkupDate in $vChgMarkupRevdateOID) {
+                            if($vChgMarkupRevdateOID[$eachvMarkupDate] == $mastertocOID[$eachmasterOID]) {
+                                $vMarkupDateError = "true";
+                                $validateErrorFound = "true";
+                            }
+                        }
+                    }
+                    
+                    #if anything in vSectionNamespace exists, start checking for OID matches.
+                    #vSectionNamespace contains the OIDs of hyperlinks that are broken/mismatched.
+                    if(count($vSectionNamespace)>0) {
+                        $vNamespaceError = "false";
+                        for($eachNamespace in $vSectionNamespace) {
+                            if($vSectionNamespace[$eachNamespace] == $mastertocOID[$eachmasterOID]) {
+                                $vNamespaceError = "true";
+                                $validateErrorFound = "true";
+                            }
+                        }		
+                    }
+    
+                    #if there was an error found, eval the name of the section. 
+                    #mastertocLOCATION contains the name of each section in the toc. 
+                    if ($vDateErrorFound == "true" || $vlepDateErrorFound == "true" || $vGraphicErrorFound == "true" || $vLinkErrorFound == "true" ||$vMarkupDateError == "true" || $vNamespaceError == "true"){
+                        eval "\n\n".$mastertocLOCATION[$eachmasterOID] output=>*
+                    }
+    
+                    #display graphic width error info
+                    if($vGraphicErrorFound == "true") {
+                        eval "\n    \[Graphic Error]" output=>*
+                        for($eachvGraphic in $vGraphicTOCOID) {
+                            #if there are matching OIDs, eval the name of the section once. 
+                            if($mastertocOID[$eachmasterOID] == $vGraphicTOCOID[$eachvGraphic]) {
+                                
+                                #title of the current section with error.
+                                $vSectionTitle = $vGraphicTitle[$eachvGraphic] 
+                                #identical to vSectionTitle.
+                                $vCurrentSection = $vSectionTitle 
+                                
+                                #only eval section title if current and previous section names are different. 
+                                #otherwise, the same section title evals multiple times. 
+                                if($vCurrentSection != $vPreviousSection) {
+                                    eval $vGraphicTitle[$eachvGraphic]."\n" output=>*
+                                    eval $vGraphicOID[$eachvGraphic]."\n" output=>*
+                                }
+                                
+                                #set vCurrentSection to previous title
+                                $vPreviousSection = $vCurrentSection;
+                                eval $vGraphicError[$eachvGraphic]."\n" output=>*
+                            }
+                        }				
+                    }
+    
+                    #output revdate and lepdate error header
+                    if ($vDateErrorFound == "true" || $vlepDateErrorFound == "true" || $vMarkupDateError == "true") {
+                        eval "\n    \[Date Errors]" output=>*
+                    }
+    
+                    #output revdate errors
+                    if ($vDateErrorFound == "true") {
+                        #check missing revdate, then print correct revdate heading
+                        if (oid_attr($mastertocOID[eachmasterOID], "revdate") == "") {
+                            eval "\n       revdate: _____".oid_attr($mastertocOID[$eachmasterOID],"revdate")."\n" output=>*
+                        }
+    
+                        if (oid_attr($mastertocOID[eachmasterOID], "revdate") != "") {
+                            eval "\n       revdate: ".oid_attr($mastertocOID[$eachmasterOID],"revdate")."\n" output=>*
+                        }
+    
+                        #error msg output
+                        for (each_revdateOID in $revdateOID) {
+                            if ($revdateOID[each_revdateOID] == $mastertocOID[eachmasterOID]) {
+                                eval "            -".$revdateErrors[each_revdateOID]."\n" output=>*
+                            } 
+                        }
+                    } #end if vDateErrorFound true
+                        
+                    #output lepdate errors
+                    if ($vlepDateErrorFound == "true") {	
+                        #check missing lepdate, then print correct revdate heading
+                        if (oid_name($mastertocOID[eachmasterOID]) == "chapter" && oid_attr($mastertocOID[eachmasterOID],"lepdate") == "" ) {
+                            eval "\n       lepdate: _____".oid_attr($mastertocOID[$eachmasterOID],"lepdate")."\n" output=>*
+                        }
+    
+                        if (oid_name($mastertocOID[eachmasterOID]) == "chapter" && oid_attr($mastertocOID[eachmasterOID],"lepdate") != "" ) {
+                            eval "\n       lepdate: ".oid_attr($mastertocOID[$eachmasterOID],"lepdate")."\n" output=>*
+                        }
+                        
+                        for(lepdateOIDCount in $lepdateOID) {
+                            if($lepdateOID[lepdateOIDCount] == $mastertocOID[eachmasterOID]) {
+                                eval "            -".$lepdateErrors[lepdateOIDCount]."\n" output=>*
+                            }
+                        }
+                    } #end if vlepDateErrorFound true
+                    #end output revdate and lepdate error info
+                    
+                    #display if change markup exists and revdate does not match lepdate
+                    if($vMarkupDateError == "true") {
+                        eval "\n       Incorrect Revdate" output=>*
+                        for($eachvMarkupDate in $vChgMarkupRevdateOID) {
+                            if($vChgMarkupRevdateOID[$eachvMarkupDate]==$mastertocOID[$eachmasterOID]) {
+                                eval "\n       revdate: ".$vChgMarkupRevdateRevDate[$eachvMarkupDate]."    lepdate: ".$vChgMarkupRevdateLEPDate[$eachvMarkupDate] output=>*
+                                eval "\n             -".$vChgMarkupRevdateError[$eachvMarkupDate]."\n" output=>*						
+                            }
+                        }
+                    }
+                
+                    #display link error info. 
+                    if($vLinkErrorFound == "true") {
+                        for($eachvLinkOID in $vLinkOID) {
+                            if($vLinkOID[$eachvLinkOID]==$mastertocOID[$eachmasterOID]) {
+                                #mismatch link error 
+                                if($vLinkErrorType[$eachvLinkOID] == "[MISMATCH]") {
+                                    eval "\n    [Mismatch Link]\n" output=>*
+                                    eval "        -Current Text: ".$vLinkCurrentText[$eachvLinkOID]."\n" output=>*
+                                    eval "        -Correct Text: ".$vLinkCorrectText[$eachvLinkOID]."\n" output=>*
+                                }
+                                
+                                #broken link error
+                                if($vLinkErrorType[$eachvLinkOID] == "[BROKEN]") {
+                                    eval "\n    [Broken Link]\n" output=>*
+                                    eval "        -Current Text: ".$vLinkCurrentText[$eachvLinkOID]."\n" output=>*
+                                }
+                            }
+                        }
+                    }
+    
+                    #display namespace error information
+                    if($vNamespaceError == "true") {
+                        for($eachNamespace in $vSectionNamespace) {
+                            if($vSectionNamespace[$eachNamespace] == $mastertocOID[$eachmasterOID]) {
+                                eval "\n    [Namespace Error]\n" output=>*
+                                eval "            -Missing namespace\n" output=>*
+                            }
+                        }
+                    }
+                }
+                #display broken link count if count is greater than 1 and Links was selected in prompt. 	
+                if($brokenLinkCount>=1 && linksPROMPT==1) {
+                    eval "\n\n Broken Links: ".$brokenLinkCount output=>*
+                }
+                #display mismatched link count if count is greater than 1 and Links was selected in prompt. 
+                if($misMatchedLinkCount>=1 && linksPROMPT==1) {
+                    eval "\n\n Mismatched Links: ".$misMatchedLinkCount output=>*
+                }
+    
+                #display if there are no validation errors
+                if($validateErrorFound == "false") {
+                    eval "\n\n  No validation errors found" output=>*
+                }
+            }
+        }
+        else {
+            message "Run Index Manual."
+        }
+    }
+            </code>
+        </pre>
+        <h4>Validate Manual Report Example</h4>
+        <p></p>
+        <img src="images/validate-manual-report.png" />
+    </div>
+    <div class="container">
+        <br>
+        <h3>
+            Validate Graphics
+        </h3>
+        <p>
+            This validation function checks all graphics for known errors. 
+        </p>
+        <p>An example of a correct width or height is width=6.5in or height=680px</p>
+        <p>Validate Graphics checks for the following errors:<ul>
+            <li>Ensures the last two characters of the width are "in"</li>
+            <li>Checks if two more periods exist</li>
+            <li>Checks for any spaces</li>
+            <li>If the height attribute is missing completely</li>
+            <li>Checks if the last character before "in" is a number. Example: 5.0in = valid, 5.in = invalid </li>
+            <li>Checks for missing width attribute.</li>
+        </ul></p>
+       
+        <pre>
+            <code class="language-bash">
+    function validateGraphics()
+    {
+        delete($oid_allGraphics);
+        delete($oid_GParent);
+    
+        eval "\n\n=======================================" output=>*
+        eval "\nValidate Graphics Report " output=>*
+        eval "\nReport Run: ".time_date() output=>*
+        eval  "\nRun by: ".username() output=>*
+        eval "\n=======================================\n" output=>*
+        
+        #start the graphic count
+        $allGraphicCount = 0;
+    
+        #find all the graphics in the viewed document and put in an array. 
+        oid_find_children(oid_first(), oid_allGraphics, "graphic")
+        
+        #count how many graphics are in oid_allGraphics
+        $graphCount = count(oid_allGraphics)
+    
+        #Create No Errors flag. Shows every time as either "No errors were found" or "(blank)" 
+        $noErrors = "\n\n\nNo errors were found.";
+        
+    
+        #for every graphic in oid_allGraphics
+        for (eachGraphic in oid_allGraphics) {
+            $allGraphicCount++;	#increment the number of graphics
+            
+            #get the name and if of parent figure title
+            $graphicParent = oid_parent(oid_allGraphics[eachGraphic])
+            $findGraphicTitle = oid_content(oid_child(graphicParent), 0x80)
+            if (findGraphicTitle == "")	{
+                $graphicTitle = "No title found";
+            }
+            else{
+                $graphicTitle = findGraphicTitle;
+            }
+            #$graphicTitle = oid_content(graphicParent, 0x80)
+            $findFigurexID = oid_attr(graphicParent, "id")
+            if (findFigurexID == ""){
+                $figurexID = "No ID found";
+            }
+            else{
+                $figurexID = $findFigurexID;
+            }
+    
+            #.Create a flag called ErrorFound. Resets each flag to nothing for each graphic. 
+            $errorFound = "false";
+            $errorWidthMissing = "";
+            $errorINFound = "";
+            $errorPeriods = "";
+            $errorSpaces = "";
+            $errorHeightMissing = "";
+            $errorBeforeIN = "";
+    
+            #.test if the width is set. Continue if there is something in the width attribute. 
+            if(oid_attr(oid_allGraphics[eachGraphic], "width"))	{
+            
+                #-----------------------------------------
+                #Check if the last two characters are "in"
+                #-----------------------------------------
+                #Create a string with the width attribute.
+                $attWidthString = oid_attr(oid_allGraphics[eachGraphic], "width"); 
+                #Create a string of just the last two characters in the width.
+                $lastTwo = substr($attWidthString,(length($attWidthString)-1),(length($attWidthString)))
+                
+                #.If the last two characters are not "in", set flag to true and eval error; noErrors sets to blank.
+                if ($lastTwo != "in"){
+                    $errorINFound = "-The width does not end in \"in\" ";
+                    $errorFound = "true";
+                    $noErrors = "";
+                }
+                
+                
+                #-------------------------------
+                #Check for 2 or more periods
+                #-------------------------------
+                #set periods to 0 for each new graphic. 
+                $periods = 0; 
+                #Create a string of just the last two characters in width.
+                $attWidthString2 = oid_attr(oid_allGraphics[eachGraphic], "width"); 
+                #gsub looks for all periods, replaces each with  an asterick, and returns number of astericks.  #p = the new string (Ex: 6*5in). Must use single quotes and \, otherwise will not work. 
+                $periods = gsub('\.','x', $attWidthString2, $p)
+                
+                #if there is more than one period, set flag to true and eval the error; noErrors sets to blank. 
+                if ($periods > 1){
+                    $errorPeriods = "-More than one period";
+                    $errorFound = "true";
+                    $noErrors = "";
+                }
+                    
+                #-------------------------
+                #Check for any spaces
+                #-------------------------
+                $spaces = 0; #set spaces to 0 for each new graphic.
+    
+                #gsub finds all spaces, sets each space to #, and returns number of #s. $s saves the new string. 
+                $spaces = gsub(' ','#', $attWidthString2, $s)
+                
+                #if there are any spaces, set flag to true and eval the error; noErrors sets to blank.
+                if ($spaces >= 1){
+                    $errorSpaces = "-Space present";
+                    $errorFound = "true";
+                    $noErrors = "";
+                }
+        
+                #----------------------------
+                #Check for missing @height
+                #----------------------------
+                #check the height attribute for each graphic
+                    $eachHeight = (oid_attr(oid_allGraphics[eachGraphic], "height"))
+                if ($eachHeight == "") {
+                    $errorHeightMissing = "-Missing height";
+                    $errorFound = "true";
+                    $noErrors = "";
+                }
+            
+                #-----------------------------------------------------
+                #Check if the last character before "in" is a number. 
+                #Example: 5.0in = valid, 5.in = invalid
+                #-----------------------------------------------------
+                if ($lastTwo == "in"){	
+                    #get the single character before IN
+                    $attWidthString3 = oid_attr(oid_allGraphics[eachGraphic], "width"); 
+                    $widthText = substr(attWidthString3, 1, (length(attWidthString3)-2))
+                    local $lastChar = substr(widthText, (length(widthText)), (length(widthText)))
+                    #eval $lastChar output=>*
+    
+                    #.If the last character is not a number, set flag to true and eval error; noErrors sets to blank.
+                    local i; #i = integers 0-9. 
+                    local $countINnoError = 0; #count if lastChar is equal to any integer 0-9
+                    for (i = 0; i <= 9; i++) {	
+                        #turns i (0-9) into a string. Able to compare integers to characters
+                        $strI = "".i.""; 
+                        
+                        #if the last char is equal to integers 0-9.
+                        if($lastChar == $strI) {
+                            $countINnoError++;	
+                        }
+                    }
+                    #if lastChar did not equal integers 0-9
+                    if ($countINnoError == 0) {
+                        $errorBeforeIN = "-The character before \"in\" is not a number.";
+                        $errorFound = "true";
+                        $noErrors = "";
+                    }
+                }
+            }        
+            
+            #-----------------------------------
+            #Check for missing width attribute. 
+            #-----------------------------------
+            #If there is not a width set, set flag to true and eval the error; noErrors sets to blank.
+            else {
+                $errorWidthMissing = "-Missing width.";
+                $errorFound = "true";
+                $noErrors = "";
+            }
+            
+            #If the errorFound flag is set to true on any above, eval the error. 
+            if($errorFound == "true"){
+    
+                eval "\n\n\n\n\n\nFigure Title: ".$graphicTitle output=>*
+                eval "\nFigure ID: ".$figurexID."\n" output=>*
+                eval $errorWidthMissing output=>*
+                eval $errorINFound output=>*
+                eval $errorPeriods output=>*
+                eval $errorSpaces output=>*
+                eval $errorHeightMissing output=>*
+                eval $errorBeforeIN output=>*
+            }
+        }
+        #eval the noErrors flag every time. 
+        eval $noErrors output=>* 
+        
+        #.Display total number of graphics.
+        eval "\n______________________________" output=>*
+        eval "\nTotal number of graphics: ".$allGraphicCount output=>*
+                        
+    }
+            </code>
+        </pre>
+        <h4>Validate Graphics Report Example</h4>
+        <p>The following is an example of the Validate Grahpics Report. </p>
+        <p>The figure name, figure ID, and the error is included to find and correct the graphic errors. </p>
+        <img src="images/validate-graphics-report.png" />
+    </div>
+
+    <div class="container">
+        <br>
+        <h3>
+            Validate Menu
+        </h3>
+        <p>
+            I have developed multiple Validate Manual functions. 
+        </p>
+        <p>This menu shows the validation and reporting functions that are available. </p>
+        <img src="images/validate-menu.PNG" />
+        <br>
+        <br>
+    </div>
+        
+    </div>
+
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 </body>
 </html>
