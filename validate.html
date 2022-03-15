@@ -446,7 +446,7 @@ function validateManual(){
                 $periods = 0; 
                 #Create a string of just the last two characters in width.
                 $attWidthString2 = oid_attr(oid_allGraphics[eachGraphic], "width"); 
-                #gsub looks for all periods, replaces each with  an asterick, and returns number of astericks.  #p = the new string (Ex: 6*5in). Must use single quotes and \, otherwise will not work. 
+                #gsub looks for all periods, replaces each with  an asterisk, and returns number of asterisks.  #p = the new string (Ex: 6*5in). Must use single quotes and \, otherwise will not work. 
                 $periods = gsub('\.','x', $attWidthString2, $p)
                 
                 #if there is more than one period, set flag to true and eval the error; noErrors sets to blank. 
@@ -548,7 +548,7 @@ function validateManual(){
             </code>
         </pre>
         <h4>Validate Graphics Report Example</h4>
-        <p>The following is an example of the Validate Grahpics Report. </p>
+        <p>The following is an example of the Validate Graphics Report. </p>
         <p>The figure name, figure ID, and the error is included to find and correct the graphic errors. </p>
         <img src="images/validate-graphics-report.png" />
     </div>
