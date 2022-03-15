@@ -17,43 +17,233 @@
 <body>
     <div class="container">
         <br>
+        <a href="/index.html" class="button">Back</a>
+        <br>
+        <br>
         <h2 class="heading">Interfacing Topics in Manuals</h2>
         <p>An interface occurs when multiple information sources share content, either explicitly or in concept. 
             Documents are identified as having interfaces with other documents that describe similar content, even though the verbiage and context may not be identical.</p>
+            <p>I have written over 5500 lines of code for this project. </p>
         
         <p>Example of an Interfacing topic between multiple departments:</p>
-        <p><b>Aircraft Weight</b>--the weight of an aircraft if required to be documented and affects multiple working groups.</p>
+        <p><b>Aircraft Weight</b>--the weight of an aircraft is required to be documented and affects multiple working groups.</p>
         <ul>
-            <li>The Weight and Balance manual contains all of the regulated information on how to weight an aircraft. </li>
-            <li>Maintenance: The maintenance workers do the actual weighing of the aircraft. </li>
-            <li>Flight Operations: Pilots </li>
-            <li>Inflight Flight Attendants: Record the count of passengers and move to different seats if required for balancing.</li>
-            <li>Ground Operations: Make </li>
+            <li>The Weight and Balance Manual contains all of the regulated information on how to weight an aircraft. </li>
+            <li>Maintenance weighs the aircraft, Pilots and Dispatch plan routes, Fuel Quality determines fuel capacities, Flight Attendants balance passenger weight in the aircraft, and Ground Operations tracks cargo weight.  </li>
+            <li>All of these groups have regulated documentation and are interfacing topics connected via meta tags. </li>
         </ul>
         <p>Interfacing Topics uses the following components:<ul>
-            <li><a href="#iface1">Interface Manger:</a> XML Meta-tagging via to tag topics that interface.</li>
-            <li><a href="#iface2">Automation</a> to update interfaces that changed section number/titles/publication dates. </li>
+            <li><a href="#iface1">Interface Manger:</a> XML dialog to insert to tag topics that interface.</li>
+            <li><a href="#iface2">Automation for Updating:</a> Update interfaces that changed section number/titles/publication dates. </li>
             <li>Extract data from XML manuals, load into QuickBase, searchable dashboard.</li>
-            <li>Generate reports on interfacing content for subject matter experts. </li>
-            <li><a href="#iface3">Automation</a> to find topics that interfaced with current document. </li>
+            <li><a href="#iface4">Generate Reports:</a> Generate multiple reports to provide subject matter experts and Leadership. </li>
+            <li><a href="#iface5">Automation for Tagging:</a> Find manuals that have interfacing topics and insert automatically. </li>
         </ul></p>
         <h3 id="iface1">Interface Manager</h3>
-        <p>The Interface Manager is used to insert interface tags. Inserting interface tags via the Interface Manager ensures the tags are built using the most up to date content. The Interface Manager lists the sections that a manual can interface to.</p>
+        <p>The Interface Manager is used to insert interface tags. Inserting interface tags via the Interface Manager ensures a valid tag is built using the most up to date content. The Interface Manager lists the sections that a manual can interface to.</p>
         <p>The custom dialog boxes are created using XUI (XML-based User Interface) and JavaScript.</p>
         <img src="images/interface-manager.PNG" />
         <p>Screenshot of the custom dialog boxes using XML, XUI, and JavaScript. </p>
         <img src="images/interface-manager-xml.PNG" />
-        <p>The technical writer can insert the interface meta tag without manually typing any attributes (which reduces human error). </p>
-        <p>Example of an interface tag at a section level. This was inserted via the Interface Manager. </p>
+        <p>The Technical Writer can insert the interface meta tag without manually typing any attributes (which reduces human error). </p>
+        <p>Example of an interface tag at a section level. This was inserted via the Interface Manager. The tag attributes hold all the relevant information used for reporting. </p>
         <img src="images/iface-tags.PNG"/>
+        <br>
     </div>
-    <div class="container">
-        <h3 id="iface2">Automation for Topic Interfacing</h3>
-        <p>I have developed multiple automation functions to help manage and keep accurate information on interfaces.  </p>
-        <p>This function looks for other manuals that interface to it and automatically insert them for the user. </p>
 
+    <div class="container">
+        <br>
+        <h3 id="iface2">Automation for Updating Interfaces</h3>
+        <p>I have developed multiple automation functions to help manage and keep accurate information on interfaces. </p>
+        <p>This function automatically updates out of date interfaces (e.g., new publish date, section number and name changes). Technical Writers do not have to manually keep track of these changes. </p>
+        <p>This function completes in less than 1 minute. </p>
         <pre>
             <code class="language-bash">
+    ########################################################################################
+    #	updates both internal and external interfaces that were identified as incorrect in the compare.
+    #	updates from both datafile content and indexManual().
+    ########################################################################################
+    function updateInterfaceData(){
+        
+        #ensure interfaces auto update report was run first. 
+        if($compareReportRun=="true"){
+            #confirm changing all interfaces first. 
+            $IfaceProceed = response("Confirm update all interfaces tags?", "Yes", "No")
+            $ifaceUpdated=""
+            $countInterfacesUpdated=0;
+    
+            if($IfaceProceed==1){
+                if(count($ifaceUpdateifaceXID)>0){
+                    #for every iface in the origin manual 
+                    for($eachIface in $ifaceOID){
+                        for($eachIfaceFound in $ifaceUpdateifaceXID) {
+                            if($ifaceID[$eachIface]==$ifaceUpdateifaceXID[$eachIfaceFound]){
+                                
+                                $ifaceUpdated="false"
+                                #REVDATE 
+                                if($ifaceUpdateREFREVDATE[$eachIfaceFound]=="true"){
+                                    $ifaceUpdated="true"
+                                    oid_modify_attr($ifaceOID[$eachIface], "refrevdate", $ifaceUpdateCorrectREFREVDATE[$eachIfaceFound])
+                                    #eval "the refrev date was changed" output=>*
+                                }
+                                #REVNUM
+                                if($ifaceUpdateREFREVNUM[$eachIfaceFound]=="true"){
+                                    $ifaceUpdated="true"
+                                    oid_modify_attr($ifaceOID[$eachIface],"refrevnum",$ifaceUpdateCorrectREFREVNUM[$eachIfaceFound])
+                                    #eval "the refrev num was changed" output=>*
+                                }
+                                #REFLOC
+                                if($ifaceUpdateREFLOC[$eachIfaceFound]=="true"){
+                                    $ifaceUpdated="true"
+                                    oid_modify_attr($ifaceOID[$eachIface], "refloc", $ifaceUpdateCorrectREFLOC[$eachIfaceFound])
+                                    #eval "the reflocation was changed" output=>*
+                                }
+                                #TITLE
+                                if($ifaceUpdateREFTITLE[$eachIfaceFound]=="true"){
+                                    $ifaceUpdated="true"
+                                    oid_modify_attr($ifaceOID[$eachIface],"reftitle",$ifaceUpdateCorrectREFTITLE[$eachIfaceFound])
+                                    #eval "the refrev title was changed" output=>*
+                                }
+                                if($ifaceUpdated=="true") {
+                                    $countInterfacesUpdated++
+                                    #get the lastupdated timestamp. 
+                                    getTimeDate("1")
+                                    #add the lastupdated timestamp after all changes to the iface tag have been made. 
+                                    oid_modify_attr($ifaceOID[$eachIface], "lastupdated", $timeDateFinal)
+                                    eval "\n".$ifaceUpdatetocLOCATION[$eachIfaceFound] output=>*
+                                    eval "\n\n\n\t[".$eachIfaceFound."]\t current: ".$ifaceUpdateBOOK[$eachIfaceFound].$ifaceUpdateCurrentREFLOC[$eachIfaceFound]." ".$ifaceUpdateCurrentREFTITLE[$eachIfaceFound]." ".$ifaceUpdateCurrentREFREVNUM[$eachIfaceFound]." ".$ifaceUpdateCurrentREFREVDATE[$eachIfaceFound]."\n\t\t correct: ".$ifaceUpdateCorrectREFLOC[$eachIfaceFound]." ".$ifaceUpdateCorrectREFTITLE[$eachIfaceFound]." ".$ifaceUpdateCorrectREFREVNUM[$eachIfaceFound]." ".$ifaceUpdateCorrectREFREVDATE[$eachIfaceFound] output=>*
+                                    eval "[[[revdate ".$ifaceUpdateREFREVDATE[$eachIfaceFound]."]]]" output=>*
+                                    eval "[[[revnum ".$ifaceUpdateREFREVNUM[$eachIfaceFound]."]]]" output=>*
+                                    eval "[[[refloc ".$ifaceUpdateREFLOC[$eachIfaceFound]."]]]" output=>*
+                                    eval "[[[reftitle ".$ifaceUpdateREFTITLE[$eachIfaceFound]."]]]" output=>*
+                                    eval "[[[broken ".$ifaceUpdateBROKEN[$eachIfaceFound]."]]]" output=>*
+                                }
+                            }
+                        }
+                    }	
+                }
+                else{
+                    message_box("All interfaces are up-to-date.",0x00)
+                }
+            }
+        }
+        else{
+            message_box("Run AUTO UPDATE INTERFACES REPORT first",0x00)
+        }
+        if($countInterfacesUpdated>0){
+            message_box("Update Complete. \nTotal interfaces updated: ".$countInterfacesUpdated,0x00)
+        }
+    }
+                
+            </code>
+        </pre>
+    </div>
+    <div class="container">
+        <h3 id="iface4">
+            Reporting - List All Revised Interfaces
+        </h3>
+        <p>This report shows only new or revised interfaces.</p>
+        <p>This report was directly requested from Senior Leadership to understand what topics were being revised. </p>
+        <p>The report can be generated in less than 30 seconds. </p>
+        <pre>
+            <code class="language-bash">
+    ############################################################
+    #interface reporting functions
+    ############################################################
+    
+    #LIST INTERFACES - REVISED SECTIONS ONLY
+    #shows all interfaces for only revised sections. 
+    function listRevisedIfacesReport() {
+    
+        $listRevIface=0;
+        $sortTitle=0
+        $sortRIfaces=0;
+
+        if (oid_valid($ifaceExistOID[1])) {
+            #find which ifaces with ifaceLocationOID that match the IfaceExistOID
+            for ($eacheOID in $ifaceExistOID) {
+                for ($eachiOID in $ifaceLocationOID) {
+                    if($ifaceExistOID[$eacheOID]==$ifaceLocationOID[$eachiOID]) {
+                    
+                        $listRevIface++
+                        $ifaceRevisionSectionTITLE[$listRevIface]=$ifaceTITLE[$eachiOID];
+                        $ifaceRevisionSectionOID[$listRevIface]=$ifaceLocationOID[$eachiOID]
+                        
+                        $ifaceRevisedLASTUPDATED[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "lastupdated");
+                        $ifaceRevisedREFDOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");
+                        $ifaceRevisedREFDOC2[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");#this used to qsort manual titles. 
+                        $ifaceRevisedREFLOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refloc");
+                        $ifaceRevisedREFREVDATE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevdate");
+                        $ifaceRevisedREFREVNUM[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevnum");
+                        $ifaceRevisedREFTITLE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "reftitle");
+                    }
+                }
+            }
+            
+            eval "\n================================" output=>*
+            eval "\nLIST INTERFACES - REVISED SECTIONS ONLY" output=>*
+            eval "\n".$manualTitle output=>*
+            eval "\nRevision Number: ".$manualRevnumber output=>*
+            eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
+            eval "\nReport Run: ".time_date() output=>*
+            eval "\nRun by: ".username() output=>*
+            eval "\n--------------------------------" output=>*
+            eval "\n\n\nThis report lists interfaces for sections that were updated with this revision." output=>*
+            eval "\n\n\n\nTotal Interfaces: ".$listRevIface output=>*
+            eval "\n\n\nInterfaced Documents: \n" output=>*
+            
+            #list all the manuals that are reference documents for this report. 
+            qsort($ifaceRevisedREFDOC2)
+            for (manual in $ifaceRevisedREFDOC2){
+                if ($ifaceRevisedREFDOC2[manual-1] != $ifaceRevisedREFDOC2[manual]) {
+                    eval $ifaceRevisedREFDOC2[manual]."\n" output=>*
+                }
+            }
+            #build an array of section titles only listed once and still in toc order (not qsort)
+            for (xy in $ifaceRevisionSectionOID) {
+                if ($ifaceRevisionSectionTITLE[xy-1] != $ifaceRevisionSectionTITLE[xy]) {
+                    $sortTitle++
+                    $sortMyManualTITLE[$sortTitle]=$ifaceRevisionSectionTITLE[xy]
+                    $sortMyManualOID[$sortTitle]=$ifaceRevisionSectionOID[xy]
+                }
+            }
+            #find the ifaces per section. Qsort the list to alphabetize. Print section title and ifaces per section. 
+            for ($eachc in $sortMyManualOID) {
+                delete($sortMyInterfaces);
+                $sortRIfaces=0;
+                for ($eachx in $ifaceRevisionSectionOID) {
+                    if($sortMyManualOID[$eachc]==$ifaceRevisionSectionOID[$eachx]) {
+                        $sortRIfaces++
+                        $sortMyInterfaces[$sortRIfaces]=toupper($ifaceRevisedREFDOC[eachx])."  ".$ifaceRevisedREFREVNUM[eachx]."  ".$ifaceRevisedREFREVDATE[eachx]."  ".$ifaceRevisedREFLOC[eachx]." ".$ifaceRevisedREFTITLE[eachx]."\n"
+                    }
+                }
+                qsort($sortMyInterfaces); 
+                eval "\n[".$sortMyManualTITLE[$eachc]."]\n" output=>*
+                for ($eachr in $sortMyInterfaces) {
+                    eval $sortMyInterfaces[$eachr] output=>*
+                }			
+            }
+        #if no interfaces exist in revised sections. 
+        } else if (oid_valid($ifaceOID[1]) && !oid_valid($ifaceExistOID[1])){
+            message_box("There are no interfaces in revised sections.",0x30);
+        } else {
+            message_box("Index manual OR no interfaces exist in this manual.",0x30);
+        }
+    }
+            </code>
+        </pre>
+    </div>
+
+    <div class="container">
+        <h3 id="iface5">
+            Automation - Find Interfacing Topics
+        </h3>
+        <p>This function looks for other manuals that interface to it and automatically insert them for the user. </p>
+        <p>This saves multiple hours of work each revision. Technical Writers do not have to search for what other manuals interface to their manuals. They only have to review the report and confirm before auto insertion of the interface tags. </p>
+        <p>This function completes in less than 1 minute. </p>
+        <pre>
+            <code class="language-bash">
+
     ##################################################
     # MISSING EXTERNAL MUTUAL INTERFACES FUNCTIONS
     ##################################################
@@ -65,30 +255,7 @@
         $knownmissingcount=0;
         $countUpdatedBooks=0;
         $childBookCount=0;
-        $matchingExternal="";
-        $iCurrentSection="";
-        $iPreviousSection="";
-        $ifacesNeedUpdating="false";
-        $findbook="";
-        $mutualexternalmissinginterfacesRun="";
-        $mutualexternalmissinginterfacesRunBOOK="";
-        delete($localIfaceOID);
-        delete($localIfacesLocationID);
-        delete($matchingRemote);
-        delete($localIfaceREFTO);
-        delete($knownMissingREFTO);
-        delete($knownMissingTEXT);
-        delete($knownMissingBOOKS);
-        delete($knownMissingParentxID);
-        delete($knownMissingLOC);
-        delete($knownMissingTITLE);
-        delete($knownMissingREVDATE);
-        delete($knownMissingREVNUM);
-        delete($printEBooks);
-        delete($printESectionTitle);
-        delete($printESectionText);
-        delete($knownMissingGOTOBOOK);
-            
+        
         #index the manual
         indexManual()
         #change bookname to a string so can be passed into oid_attr
@@ -193,16 +360,6 @@
                         }
                     }
                 }
-                #build the report
-                eval "\n=====================================" output=>*
-                eval "\nMISSING EXTERNAL INTERFACES REPORT " output=>*
-                eval "\n".$manualTitle output=>*
-                eval "\nRevision Number: ".$manualRevnumber output=>*
-                eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
-                eval "\nReport Run: ".time_date() output=>*
-                eval "\nRun by: ".username() output=>*
-                eval "\n-------------------------------------\n" output=>*	
-                
                 if($ifacesNeedUpdating=="true") {
                     eval "\n\nThe following ".toupper($manualBookName)." sections are missing external interfaces: \n" output=>*
                     qsort($printEBooks)
@@ -236,19 +393,14 @@
     }
     
     # ------------------------------------------------
-    #Updates Missing External Mutual Interfaces
+    #Updates Missing External Mutual Interfaces automatically
     # ------------------------------------------------
     function updatemissingexternalifaces() {
         
         #this function adds missing external ifaces automcatically. 
         #use the array from previous function. 
         $countCorrected=0;
-        $newExternalIface="";
-        $iSectionTitle2="";
-        $iCurrentSection2="";
-        $iPreviousSection="";
-        $viewingBookName="";
-        
+
         if ($mutualexternalmissinginterfacesRun=="true") {
             
             #find the xreflabel. Confirm this is the same manual the report was run on. 
@@ -257,16 +409,7 @@
             
                 $IfaceMissingProceed=response("Confirm update all missing external interfaces?", "Yes", "No")
                 if($IfaceMissingProceed==1) {
-                    
-                    eval "\n=====================================" output=>*
-                    eval "\nUPDATE MISSING EXTERNAL INTERFACES REPORT " output=>*
-                    eval "\n".$manualTitle output=>*
-                    eval "\nRevision Number: ".$manualRevnumber output=>*
-                    eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
-                    eval "\nReport Run: ".time_date() output=>*
-                    eval "\nRun by: ".username() output=>*
-                    eval "\n-------------------------------------\n" output=>*	
-    
+
                     if($knownmissingcount>0) {
                         eval "\n\n\n\nExternal Interfaces were added to the ".toupper($manualBookName)." at the following locations: " output=>*
                         #loop through entire toc and compare to array with known missing
@@ -317,123 +460,18 @@
             message_box("Run List Missing External Interfaces.", 0x00, "Arbortext Error")
         }
     }
+    
             </code>
         </pre>
     </div>
-    <div class="container">
-        <h3 id="iface3">
-            Reporting - List All Revised Interfaces
-        </h3>
-        <ul>
-            <li>This report shows only new or revised interfaces. </li>
-            <li>This report was directly requested from Senior Leadership to understand what topics were being revised. </li>
-        </ul>
-        <p>
 
-        </p>
-        <pre>
-            <code class="language-bash">
-    ############################################################
-    #interface reporting functions
-    ############################################################
-    
-    #LIST INTERFACES - REVISED SECTIONS ONLY
-    #shows a interfaces for only revised sections. 
-    function listRevisedIfacesReport() {
-    
-        $listRevIface=0;
-        $sortTitle=0
-        $sortRIfaces=0;
-        delete($ifaceRevisionSectionTITLE);
-        delete($ifaceRevisionSectionOID);
-        delete($ifaceRevisedLASTUPDATED);
-        delete($ifaceRevisedREFDOC);
-        delete($ifaceRevisedREFDOC2);
-        delete($ifaceRevisedREFLOC);
-        delete($ifaceRevisedREFREVDATE);
-        delete($ifaceRevisedREFREVNUM);
-        delete($ifaceRevisedREFTITLE);
-        delete($sortMyManualTITLE);
-        delete($sortMyManualOID);
-        delete($sortMyInterfaces);
-                
+    <div class="container">
         
-        if (oid_valid($ifaceExistOID[1])) {
-        
-            #find which ifaces with ifaceLocationOID that match the IfaceExistOID
-            for ($eacheOID in $ifaceExistOID) {
-            
-                for ($eachiOID in $ifaceLocationOID) {
-                
-                    if($ifaceExistOID[$eacheOID]==$ifaceLocationOID[$eachiOID]) {
-                    
-                        $listRevIface++
-                        $ifaceRevisionSectionTITLE[$listRevIface]=$ifaceTITLE[$eachiOID];
-                        $ifaceRevisionSectionOID[$listRevIface]=$ifaceLocationOID[$eachiOID]
-                        
-                        $ifaceRevisedLASTUPDATED[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "lastupdated");
-                        $ifaceRevisedREFDOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");
-                        $ifaceRevisedREFDOC2[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refdoc");#this used to qsort manual titles. 
-                        $ifaceRevisedREFLOC[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refloc");
-                        $ifaceRevisedREFREVDATE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevdate");
-                        $ifaceRevisedREFREVNUM[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "refrevnum");
-                        $ifaceRevisedREFTITLE[$listRevIface] = oid_attr($ifaceOID[$eachiOID], "reftitle");
-                    }
-                }
-            }
-            
-            eval "\n================================" output=>*
-            eval "\nLIST INTERFACES - REVISED SECTIONS ONLY" output=>*
-            eval "\n".$manualTitle output=>*
-            eval "\nRevision Number: ".$manualRevnumber output=>*
-            eval "\nRevision Date: ".$manualRevdateCoverpage output=>*
-            eval "\nReport Run: ".time_date() output=>*
-            eval "\nRun by: ".username() output=>*
-            eval "\n--------------------------------" output=>*
-            eval "\n\n\nThis report lists interfaces for sections that were updated with this revision." output=>*
-            eval "\n\n\n\nTotal Interfaces: ".$listRevIface output=>*
-            eval "\n\n\nInterfaced Documents: \n" output=>*
-            
-            #list all the manuals that are reference documents for this report. 
-            qsort($ifaceRevisedREFDOC2)
-            for (manual in $ifaceRevisedREFDOC2){
-                if ($ifaceRevisedREFDOC2[manual-1] != $ifaceRevisedREFDOC2[manual]) {
-                    eval $ifaceRevisedREFDOC2[manual]."\n" output=>*
-                }
-            }
-            #build an array of section titles only listed once and still in toc order (not qsort)
-            for (xy in $ifaceRevisionSectionOID) {
-                if ($ifaceRevisionSectionTITLE[xy-1] != $ifaceRevisionSectionTITLE[xy]) {
-                    $sortTitle++
-                    $sortMyManualTITLE[$sortTitle]=$ifaceRevisionSectionTITLE[xy]
-                    $sortMyManualOID[$sortTitle]=$ifaceRevisionSectionOID[xy]
-                }
-            }
-            #find the ifaces per section. Qsort the list to alphabetize. Print section title and ifaces per section. 
-            for ($eachc in $sortMyManualOID) {
-                delete($sortMyInterfaces);
-                $sortRIfaces=0;
-                for ($eachx in $ifaceRevisionSectionOID) {
-                    if($sortMyManualOID[$eachc]==$ifaceRevisionSectionOID[$eachx]) {
-                        $sortRIfaces++
-                        $sortMyInterfaces[$sortRIfaces]=toupper($ifaceRevisedREFDOC[eachx])."  ".$ifaceRevisedREFREVNUM[eachx]."  ".$ifaceRevisedREFREVDATE[eachx]."  ".$ifaceRevisedREFLOC[eachx]." ".$ifaceRevisedREFTITLE[eachx]."\n"
-                    }
-                }
-                qsort($sortMyInterfaces); 
-                eval "\n[".$sortMyManualTITLE[$eachc]."]\n" output=>*
-                for ($eachr in $sortMyInterfaces) {
-                    eval $sortMyInterfaces[$eachr] output=>*
-                }			
-            }
-        #if no interfaces exist in revised sections. 
-        } else if (oid_valid($ifaceOID[1]) && !oid_valid($ifaceExistOID[1])){
-            message_box("There are no interfaces in revised sections.",0x30);
-        } else {
-            message_box("Index manual OR no interfaces exist in this manual.",0x30);
-        }
-    }
-            </code>
-        </pre>
+        <br>
+        <br>
+        <a href="/index.html" class="button">Back</a>
+        <br>
+        <br>
     </div>
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>

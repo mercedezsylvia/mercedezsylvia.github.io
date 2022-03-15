@@ -11,9 +11,6 @@
     <link href="https://fonts.googleapis.com/css?family=Lato:300,400,700,900" rel="stylesheet">
     <link rel="stylesheet" href="libs/font-awesome/css/font-awesome.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/styles/github-dark.min.css">
-
-
-
     <link href="css/bootstrap.min.css" rel="stylesheet">
     <link href="css/styles.css" rel="stylesheet">
 </head>
@@ -22,8 +19,11 @@
               <div class="row">
                     <div>
                         <br>
+                        <a href="/index.html" class="button">Back</a>
+                        <br>
+                        <br>
                         <h2 class="heading">Automation Collection</h2>
-                        <p>Overall goal of these automation functions are to increase efficiency and quality, while reducing risk and waste.</p>
+                        <p>Overall goal of these automation functions is to increase efficiency and quality, while reducing risk and waste.</p>
                     </div>
               </div>
           <div>
@@ -206,8 +206,9 @@
         </h3>
         <p>Southwest Airlines Employee website (SWALife) moved to Sharepoint, which does not support HTML manuals. A new content web server was created for all manuals (both PDF and HTML), and all manuals are now located on this web server.</p>
         <p>Instead of Technical Writers manually updating all links to point to new the web server, I created automation to complete the task. Each manual can be completed in under 1 minute, saving time and reducing risk. </p>
+        <p>The function looks for URL links that point to SWALife, and changes the URL link to the new path. </p>
         <pre>
-            <code class="language-swift">
+            <code class="language-bash">
 
     ###########################
     # CHECKS TO SEE IF NEED TO UPDATE LINKS TO NEW CP WEB SERVER.
@@ -219,7 +220,7 @@
         $yesupdatelinks="false"
         
         # OLD PATH -- https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/smm/r00-00/pdfall/smm.pdf
-        # NEW PATH -- https://centralpubs.swalife.com/swa/b737/gfe/r00-00/html/index.html
+        # NEW PATH -- https://centralpubs.swalife.com/swa/b737/smm/r00-00/html/index.html
         
         indexManual()
         #if there are links.
@@ -258,23 +259,6 @@
 function updateUrlLinks() {
     
     $countLinkURL=0;
-    $matchFoundSWA=0;
-    $matchFoundAPOEM=0;
-    $matchFoundCOBPM=0;
-    $matchFoundCOC_E=0;
-    $matchFoundCOC_S=0;
-    $matchFoundESPM=0;
-    $matchFoundFASSI=0;
-    $matchFoundFRMP=0;
-    $matchFoundFDAP=0;
-    $matchFoundFDTM=0;
-    $matchFoundFQM=0;
-    $matchFoundGOSM=0;
-    $matchFoundICI=0;
-    $matchFoundMPM=0;
-    $matchFoundPBNPM=0;
-    $matchFoundSWOM=0;
-    $matchFoundWBMFB=0;
     $urlLinkText="";
     
     # OLD PATH -- https://www.swalife.com/docs/operations/public/centralPubs/manuals/swa/b737/smm/r00-00/pdfall/smm.pdf
@@ -495,6 +479,17 @@ function updateUrlLinks() {
 
             </code>
         </pre>
+
+        
+    </div>
+
+    <div class="container">
+        
+        <br>
+        <br>
+        <a href="/index.html" class="button">Back</a>
+        <br>
+        <br>
     </div>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.4.0/highlight.min.js"></script>
       <script>hljs.highlightAll();</script>

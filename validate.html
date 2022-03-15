@@ -19,10 +19,10 @@
         <div class="row">
               <div>
                     <br>
+                    <a href="/index.html" class="button">Back</a>
+                    <br>
+                    <br>
                   <h2 class="heading">Validate Manual</h2>
-                  
-                  
-
               </div>
         </div>
     </div>
@@ -30,13 +30,13 @@
         <h3>
             Validate Manual function
         </h3>
-        <p>Overall goal of these functions is to catch known errors and pitfalls. </p>
+        <p>Overall goal of the validate manual function is to catch known errors and pitfalls. </p>
         <ul>
             <li>A manual is indexed, which collects all relevant information throughout the 
               manual such as section numbers and titles, dates, figure and table numbers/titles, attributes that control output, hyperlinks, and change markup. </li>
-            <li>This content is used in the function ValidateManual(). </li>
             <li>A report is generated that displays the location of the error and the specific type of error found.</li>
             <li>This function saves 1-2 hours of work every time content is generated (usually 5-6 times each revision). A Technical Writer can immediately run a report and fix common errors. Instead of generating output (PDF or HTML), finding errors, redoing working, and re-generating output. </li>
+            <li>The Validate Manual Report is created in 1-3 minutes (depending on size of manual). </li>
         </ul>
         <pre>
             <code class="language-bash">
@@ -178,7 +178,6 @@ function validateManual(){
                             }
                         }
                     }
-                    
                     
                     #if anything in ChgMarkupRevdateOID exists AND was selected in the prompt, check for OID matches
                     #ChgMarkupRevdateOID contains OIDs of sections with revdates that do not match book revision date. 
@@ -352,7 +351,7 @@ function validateManual(){
             Validate Graphics
         </h3>
         <p>
-            This validation function checks all graphics for known errors. 
+            This validation function checks all graphics for known errors. A Technical Writer can validate their graphics in a matter of seconds. 
         </p>
         <p>An example of a correct width or height is width=6.5in or height=680px</p>
         <p>Validate Graphics checks for the following errors:<ul>
@@ -564,6 +563,14 @@ function validateManual(){
         </p>
         <p>This menu shows the validation and reporting functions that are available. </p>
         <img src="images/validate-menu.PNG" />
+        <br>
+        <br>
+    </div>
+    <div class="container">
+        
+        <br>
+        <br>
+        <a href="/index.html" class="button">Back</a>
         <br>
         <br>
     </div>
